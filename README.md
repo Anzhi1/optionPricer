@@ -31,6 +31,27 @@ uv run pytest
 `uv.lock` should be committed so dependency resolution is reproducible. The
 local `.venv/` directory should not be committed.
 
+## Project Layout
+
+```text
+option_pricer/
+  instruments/   contract definitions, such as VanillaOption
+  payoffs/       payoff functions, such as PlainVanillaPayoff
+  exercise/      exercise rules, such as EuropeanExercise and AmericanExercise
+  processes/     market dynamics, such as BlackScholesMertonProcess
+  engines/       pricing algorithms, such as analytic, tree, and Monte Carlo
+  results/       PricingResult and Greeks
+  math/          small numerical helpers
+
+tests/           pytest test suite
+examples/        runnable usage examples
+docs/            roadmap and architecture notes
+```
+
+The package is organized around financial concepts instead of asset-class
+silos. New products should compose reusable payoffs, exercises, processes, and
+engines where that keeps the financial logic visible.
+
 ## Minimal Example
 
 ```python
@@ -61,3 +82,40 @@ result = engine.calculate(option)
 print(result.value)
 print(result.greeks.delta)
 ```
+
+## Examples
+
+Run examples through `uv` so they use the project environment:
+
+```powershell
+py -m uv run python examples/analytic_black_scholes.py
+py -m uv run python examples/binomial_european_american.py
+py -m uv run python examples/monte_carlo_vs_analytic.py
+```
+
+The examples are intentionally small. They are meant to show how the core
+objects fit together:
+
+- `VanillaOption` describes the contract.
+- `PlainVanillaPayoff` describes call or put payoff.
+- `EuropeanExercise` and `AmericanExercise` describe exercise rights.
+- `BlackScholesMertonProcess` holds flat market assumptions.
+- Engines implement pricing methods without adding valuation logic to the
+  product class.
+
+## Phase 1 Scope
+
+Supported:
+
+- European vanilla call and put options.
+- American vanilla call and put options through the binomial tree engine.
+- Analytic Black-Scholes-Merton pricing for European vanilla options.
+- Cox-Ross-Rubinstein binomial pricing.
+- European terminal-spot Monte Carlo pricing.
+
+Deferred to later phases:
+
+- Calendar dates, holidays, business-day adjustment, and day-count conventions.
+- Term structures and curve bootstrapping.
+- FX, commodity, and interest-rate products.
+- Observer, handle, lazy-evaluation, or global evaluation-date machinery.
