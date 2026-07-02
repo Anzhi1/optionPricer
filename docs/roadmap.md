@@ -77,6 +77,8 @@ Non-goals:
 
 Goal: move from flat assumptions to reusable market data abstractions.
 
+Implementation details are defined in `docs/phase-2-market-data-spec.md`.
+
 Scope:
 
 - Date utilities needed by term structures.

@@ -8,6 +8,9 @@ domain separation while using a smaller, clearer, research-first design.
 The concrete implementation scope for the first working version is defined in
 `docs/phase-1-mvp-spec.md`.
 
+The market data and term-structure scope for the second implementation phase is
+defined in `docs/phase-2-market-data-spec.md`.
+
 ## Core Principles
 
 ### Explicit Data Flow
