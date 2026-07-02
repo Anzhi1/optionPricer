@@ -41,6 +41,7 @@ option_pricer/
   processes/     market dynamics, such as BlackScholesMertonProcess
   engines/       pricing algorithms, such as analytic, tree, and Monte Carlo
   results/       PricingResult and Greeks
+  time/          day counters, calendars, and business-day adjustment
   math/          small numerical helpers
 
 tests/           pytest test suite
@@ -102,6 +103,36 @@ objects fit together:
 - `BlackScholesMertonProcess` holds flat market assumptions.
 - Engines implement pricing methods without adding valuation logic to the
   product class.
+
+## Time Conventions
+
+Phase 2 starts with lightweight, extensible time-convention components:
+
+```python
+from datetime import date
+
+from option_pricer import (
+    Actual365Fixed,
+    BusinessDayConvention,
+    WeekendCalendar,
+    adjust,
+)
+
+year_fraction = Actual365Fixed().year_fraction(
+    date(2026, 7, 2),
+    date(2027, 7, 2),
+)
+
+payment_date = adjust(
+    date(2026, 7, 4),
+    WeekendCalendar(),
+    BusinessDayConvention.FOLLOWING,
+)
+```
+
+These components are intentionally independent from products and engines. Curves
+and later rates products can reuse them without introducing global evaluation
+dates or observer-style updates.
 
 ## Phase 1 Scope
 
