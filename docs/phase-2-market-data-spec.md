@@ -100,6 +100,28 @@ curve = FlatYieldCurve(
 When a method receives a date, the curve converts it to a year fraction using its
 own reference date and day-count convention.
 
+### Minimal But Extensible Conventions
+
+Phase 2 should implement the smallest useful convention set, but the interfaces
+must be designed so later market-specific conventions can be added without
+rewriting curves, products, or engines.
+
+This means:
+
+- Day counters, calendars, and business-day conventions are public extension
+  points, not private helper functions.
+- Curves and products should depend on protocols or small shared interfaces, not
+  concrete implementations such as `WeekendCalendar`.
+- Adding a new day counter should not require changing curve classes.
+- Adding a new calendar should not require changing business-day adjustment.
+- Adding a new business-day convention may require extending the enum and adjust
+  function, but should not require changing curve or product code.
+- Market-specific calendars should be data/configuration-driven where possible,
+  especially through explicit holiday sets in early versions.
+
+The design should stay simple, but it should avoid hard-coding assumptions that
+only work for the initial examples.
+
 ## Proposed Package Layout
 
 Add the following packages and files:
@@ -138,6 +160,10 @@ Initial protocol:
 
 ```python
 class DayCounter(Protocol):
+    @property
+    def name(self) -> str:
+        ...
+
     def year_fraction(self, start: date, end: date) -> float:
         ...
 ```
@@ -153,6 +179,26 @@ Validation:
 - `end >= start`
 
 Negative year fractions should not be supported in Phase 2.
+
+Extensibility rules:
+
+- A day counter is any object implementing `year_fraction(start, end)`.
+- Day counters should be stateless when possible.
+- If a future convention needs parameters, represent them as dataclass fields
+  rather than special cases in curve code.
+- Do not create a central registry in Phase 2. Users can pass day-counter
+  objects directly.
+
+Example future extension:
+
+```python
+@dataclass(frozen=True)
+class ActualActualIsda:
+    name: str = "Actual/Actual ISDA"
+
+    def year_fraction(self, start: date, end: date) -> float:
+        ...
+```
 
 ### Actual365Fixed
 
@@ -184,6 +230,10 @@ Initial protocol:
 
 ```python
 class Calendar(Protocol):
+    @property
+    def name(self) -> str:
+        ...
+
     def is_business_day(self, day: date) -> bool:
         ...
 ```
@@ -202,6 +252,40 @@ Behavior:
   business days.
 
 No country- or exchange-specific holiday rules should be hard-coded in Phase 2.
+
+Extensibility rules:
+
+- A calendar is any object implementing `is_business_day(day)`.
+- Calendar implementations should be composable through explicit data rather than
+  hidden global tables.
+- `HolidayCalendar` should accept a name, weekend weekday set, and explicit
+  holiday dates.
+- Future exchange calendars can wrap or subclass `HolidayCalendar`, but Phase 2
+  should not require inheritance.
+- Calendar logic should not know about day-count conventions or curves.
+
+Suggested `HolidayCalendar` shape:
+
+```python
+@dataclass(frozen=True)
+class HolidayCalendar:
+    name: str
+    holidays: frozenset[date]
+    weekend_days: frozenset[int] = frozenset({5, 6})
+
+    def is_business_day(self, day: date) -> bool:
+        return day.weekday() not in self.weekend_days and day not in self.holidays
+```
+
+This lets users create research calendars without waiting for a built-in market
+calendar database:
+
+```python
+china_example = HolidayCalendar(
+    name="China example",
+    holidays=frozenset({date(2026, 10, 1), date(2026, 10, 2)}),
+)
+```
 
 ### BusinessDayConvention
 
@@ -230,6 +314,30 @@ Rules:
 - `PRECEDING`: move backward to the previous business day.
 - `MODIFIED_FOLLOWING`: move forward unless that crosses into a new month; if it
   does, move backward instead.
+
+Extensibility rules:
+
+- Keep adjustment as a function so products, schedules, and curves can share the
+  same behavior.
+- The function should depend only on `date`, `Calendar`, and
+  `BusinessDayConvention`.
+- Do not embed calendar-specific rules in the convention enum.
+- Future conventions such as `MODIFIED_PRECEDING`, `NEAREST`, or IMM-specific
+  rules should be added deliberately when a product requires them.
+- If a future convention needs parameters, introduce a separate convention object
+  rather than overloading the enum with hidden behavior.
+
+For Phase 2, an enum is enough. If later conventions become parameterized, the
+API can evolve toward:
+
+```python
+class DateAdjustment(Protocol):
+    def adjust(self, day: date, calendar: Calendar) -> date:
+        ...
+```
+
+but this abstraction should not be introduced until the enum starts to constrain
+real use cases.
 
 ## Market Data
 
@@ -504,4 +612,3 @@ Phase 2 is complete when:
 - Quotes can be updated explicitly without observer or handle machinery.
 - Phase 1 option pricing examples still run unchanged.
 - A new example prices a European option using term-structure-based market data.
-
