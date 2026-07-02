@@ -455,6 +455,7 @@ Unsupported:
 Validation:
 
 - `paths > 0`
+- if `antithetic=True`, `paths` must be even
 
 Implementation:
 
@@ -463,6 +464,8 @@ Implementation:
 - Discount the average payoff by the risk-free discount factor.
 - If `antithetic=True`, generate paired standard normals. This can be included in
   Phase 1 because it is small, educational, and useful for variance reduction.
+- In antithetic mode, compute `standard_error` from discounted pair averages,
+  not from all discounted payoffs as if they were independent.
 
 Outputs:
 

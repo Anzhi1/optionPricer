@@ -51,12 +51,18 @@ def test_monte_carlo_call_is_close_to_analytic_value() -> None:
 def test_monte_carlo_antithetic_records_diagnostics() -> None:
     result = EuropeanMonteCarloEngine(
         make_process(),
-        paths=20_001,
+        paths=20_000,
         seed=7,
         antithetic=True,
     ).calculate(make_call())
 
     assert result.value > 0.0
     assert result.diagnostics is not None
-    assert result.diagnostics["paths"] == 20_001
+    assert result.diagnostics["paths"] == 20_000
     assert result.diagnostics["antithetic"] is True
+    assert result.diagnostics["standard_error"] > 0.0
+
+
+def test_monte_carlo_antithetic_requires_even_paths() -> None:
+    with pytest.raises(ValueError, match="paths must be even"):
+        EuropeanMonteCarloEngine(make_process(), paths=101, antithetic=True)
