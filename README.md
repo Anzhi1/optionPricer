@@ -134,6 +134,35 @@ These components are intentionally independent from products and engines. Curves
 and later rates products can reuse them without introducing global evaluation
 dates or observer-style updates.
 
+## Yield Curves
+
+Phase 2 also introduces lightweight continuously compounded yield curves:
+
+```python
+from datetime import date
+
+from option_pricer import Actual365Fixed, FlatYieldCurve, ZeroCurve
+
+flat_curve = FlatYieldCurve(rate=0.05)
+print(flat_curve.discount(1.0))
+
+dated_curve = FlatYieldCurve(
+    rate=0.05,
+    reference_date=date(2026, 7, 2),
+    day_count=Actual365Fixed(),
+)
+print(dated_curve.discount(date(2027, 7, 2)))
+
+zero_curve = ZeroCurve(
+    times=[1.0, 2.0, 3.0],
+    zero_rates=[0.03, 0.04, 0.05],
+)
+print(zero_curve.zero_rate(1.5))
+```
+
+Curves support year-fraction inputs for research workflows and date inputs when
+constructed with an explicit `reference_date` and `day_count`.
+
 ## Phase 1 Scope
 
 Supported:
