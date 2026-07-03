@@ -4,12 +4,18 @@ from option_pricer.termstructures.yield_curve import (
     YieldTermStructure,
     ZeroCurve,
 )
-from option_pricer.termstructures.volatility import BlackVolCurve, BlackVolTermStructure, FlatVolatility
+from option_pricer.termstructures.volatility import (
+    BlackVolCurve,
+    BlackVolTermStructure,
+    FlatBlackVolatility,
+    FlatVolatility,
+)
 
 __all__ = [
     "BlackVolCurve",
     "BlackVolTermStructure",
     "DiscountCurve",
+    "FlatBlackVolatility",
     "FlatYieldCurve",
     "FlatVolatility",
     "YieldTermStructure",

@@ -464,7 +464,7 @@ Strike is optional in Phase 2 because the first implementation is flat or term
 only. It leaves room for later smile and surface designs without forcing them
 now.
 
-### FlatVolatility
+### FlatBlackVolatility
 
 Fields:
 
@@ -475,6 +475,10 @@ Fields:
 Validation:
 
 - `volatility > 0`
+
+`FlatVolatility` may be kept as a compatibility alias, but new examples and
+documentation should prefer `FlatBlackVolatility` to make the Black implied-vol
+semantics explicit.
 
 ### BlackVolCurve
 
@@ -513,7 +517,7 @@ process = BlackScholesMertonProcess.from_term_structures(
     spot=SimpleQuote(100.0),
     risk_free_curve=FlatYieldCurve(rate=0.05),
     dividend_curve=FlatYieldCurve(rate=0.0),
-    volatility=FlatVolatility(0.20),
+    volatility=FlatBlackVolatility(0.20),
 )
 ```
 

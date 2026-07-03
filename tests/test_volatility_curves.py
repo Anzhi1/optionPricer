@@ -2,18 +2,18 @@ from datetime import date
 
 import pytest
 
-from option_pricer import Actual365Fixed, BlackVolCurve, FlatVolatility
+from option_pricer import Actual365Fixed, BlackVolCurve, FlatBlackVolatility, FlatVolatility
 
 
 def test_flat_volatility_returns_constant_volatility() -> None:
-    vol = FlatVolatility(0.20)
+    vol = FlatBlackVolatility(0.20)
 
     assert vol.black_vol(1.0) == 0.20
     assert vol.black_vol(10.0, strike=100.0) == 0.20
 
 
 def test_flat_volatility_supports_date_input() -> None:
-    vol = FlatVolatility(
+    vol = FlatBlackVolatility(
         0.20,
         reference_date=date(2026, 7, 3),
         day_count=Actual365Fixed(),
@@ -24,14 +24,18 @@ def test_flat_volatility_supports_date_input() -> None:
 
 def test_flat_volatility_requires_complete_date_configuration() -> None:
     with pytest.raises(ValueError, match="provided together"):
-        FlatVolatility(0.20, reference_date=date(2026, 7, 3))
+        FlatBlackVolatility(0.20, reference_date=date(2026, 7, 3))
 
 
 def test_flat_volatility_rejects_invalid_volatility() -> None:
     with pytest.raises(ValueError, match="positive"):
-        FlatVolatility(0.0)
+        FlatBlackVolatility(0.0)
     with pytest.raises(ValueError, match="finite"):
-        FlatVolatility(float("nan"))
+        FlatBlackVolatility(float("nan"))
+
+
+def test_flat_volatility_alias_is_kept_for_compatibility() -> None:
+    assert FlatVolatility is FlatBlackVolatility
 
 
 def test_black_vol_curve_interpolates_volatility() -> None:

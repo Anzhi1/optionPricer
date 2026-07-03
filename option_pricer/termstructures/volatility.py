@@ -16,7 +16,7 @@ class BlackVolTermStructure(Protocol):
 
 
 @dataclass(frozen=True)
-class FlatVolatility:
+class FlatBlackVolatility:
     """Flat Black volatility term structure."""
 
     volatility: float
@@ -30,6 +30,9 @@ class FlatVolatility:
     def black_vol(self, maturity: float | date, strike: float | None = None) -> float:
         _time_from_maturity(maturity, self.reference_date, self.day_count)
         return self.volatility
+
+
+FlatVolatility = FlatBlackVolatility
 
 
 @dataclass(frozen=True)

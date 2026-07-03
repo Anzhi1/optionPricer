@@ -169,9 +169,9 @@ Black volatility can also be represented as a flat volatility or an interpolated
 term curve:
 
 ```python
-from option_pricer import BlackVolCurve, FlatVolatility
+from option_pricer import BlackVolCurve, FlatBlackVolatility
 
-flat_vol = FlatVolatility(0.20)
+flat_vol = FlatBlackVolatility(0.20)
 print(flat_vol.black_vol(1.0))
 
 vol_curve = BlackVolCurve(
@@ -181,6 +181,7 @@ vol_curve = BlackVolCurve(
 print(vol_curve.black_vol(1.5))
 ```
 
+`FlatVolatility` is kept as a compatibility alias for `FlatBlackVolatility`.
 Strike is accepted by the `black_vol` API but ignored by Phase 2 flat and term
 curves. This leaves room for smile and surface support later without forcing it
 into the first volatility implementation.
