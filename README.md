@@ -163,6 +163,28 @@ print(zero_curve.zero_rate(1.5))
 Curves support year-fraction inputs for research workflows and date inputs when
 constructed with an explicit `reference_date` and `day_count`.
 
+## Volatility Term Structures
+
+Black volatility can also be represented as a flat volatility or an interpolated
+term curve:
+
+```python
+from option_pricer import BlackVolCurve, FlatVolatility
+
+flat_vol = FlatVolatility(0.20)
+print(flat_vol.black_vol(1.0))
+
+vol_curve = BlackVolCurve(
+    times=[1.0, 2.0, 3.0],
+    volatilities=[0.20, 0.22, 0.25],
+)
+print(vol_curve.black_vol(1.5))
+```
+
+Strike is accepted by the `black_vol` API but ignored by Phase 2 flat and term
+curves. This leaves room for smile and surface support later without forcing it
+into the first volatility implementation.
+
 ## Phase 1 Scope
 
 Supported:

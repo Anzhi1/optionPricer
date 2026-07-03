@@ -12,6 +12,7 @@ from option_pricer.payoffs.vanilla import OptionType, PlainVanillaPayoff
 from option_pricer.processes.black_scholes_merton import BlackScholesMertonProcess
 from option_pricer.results.greeks import Greeks
 from option_pricer.results.pricing_result import PricingResult
+from option_pricer.termstructures.volatility import BlackVolCurve, FlatVolatility
 from option_pricer.termstructures.yield_curve import DiscountCurve, FlatYieldCurve, ZeroCurve
 from option_pricer.time.business_day import BusinessDayConvention, adjust
 from option_pricer.time.calendars import HolidayCalendar, NullCalendar, WeekendCalendar
@@ -23,12 +24,14 @@ __all__ = [
     "AmericanExercise",
     "AnalyticBlackScholesEngine",
     "BinomialTreeEngine",
+    "BlackVolCurve",
     "BlackScholesMertonProcess",
     "BusinessDayConvention",
     "DiscountCurve",
     "EuropeanExercise",
     "EuropeanMonteCarloEngine",
     "FlatYieldCurve",
+    "FlatVolatility",
     "Greeks",
     "HolidayCalendar",
     "NullCalendar",
