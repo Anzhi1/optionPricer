@@ -186,6 +186,34 @@ Strike is accepted by the `black_vol` API but ignored by Phase 2 flat and term
 curves. This leaves room for smile and surface support later without forcing it
 into the first volatility implementation.
 
+## Term-Structure-Based Process
+
+`BlackScholesMertonProcess` can still be built from flat numeric inputs, but it
+can also be created from Phase 2 market-data components:
+
+```python
+from option_pricer import (
+    BlackScholesMertonProcess,
+    FlatBlackVolatility,
+    FlatYieldCurve,
+    SimpleQuote,
+)
+
+spot = SimpleQuote(100.0)
+
+process = BlackScholesMertonProcess.from_term_structures(
+    spot=spot,
+    maturity=1.0,
+    risk_free_curve=FlatYieldCurve(rate=0.05),
+    dividend_curve=FlatYieldCurve(rate=0.0),
+    volatility=FlatBlackVolatility(0.20),
+)
+```
+
+This constructor takes a snapshot of the current quote, curve, and volatility
+values. Updating `spot.value` later does not mutate existing process objects;
+create a new process when market data changes.
+
 ## Phase 1 Scope
 
 Supported:

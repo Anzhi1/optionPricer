@@ -1,5 +1,10 @@
 from dataclasses import dataclass
+from datetime import date
 from math import exp
+
+from option_pricer.market.quotes import SimpleQuote
+from option_pricer.termstructures.volatility import BlackVolTermStructure
+from option_pricer.termstructures.yield_curve import YieldTermStructure
 
 
 @dataclass(frozen=True)
@@ -10,6 +15,27 @@ class BlackScholesMertonProcess:
     risk_free_rate: float
     dividend_yield: float
     volatility: float
+
+    @classmethod
+    def from_term_structures(
+        cls,
+        *,
+        spot: float | SimpleQuote,
+        maturity: float | date,
+        risk_free_curve: YieldTermStructure,
+        dividend_curve: YieldTermStructure,
+        volatility: BlackVolTermStructure,
+        strike: float | None = None,
+    ) -> "BlackScholesMertonProcess":
+        """Create a flat process snapshot from quote, curve, and volatility inputs."""
+
+        spot_value = spot.value if isinstance(spot, SimpleQuote) else float(spot)
+        return cls(
+            spot=spot_value,
+            risk_free_rate=risk_free_curve.zero_rate(maturity),
+            dividend_yield=dividend_curve.zero_rate(maturity),
+            volatility=volatility.black_vol(maturity, strike=strike),
+        )
 
     def __post_init__(self) -> None:
         if self.spot <= 0:

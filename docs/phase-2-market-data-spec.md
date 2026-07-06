@@ -515,6 +515,7 @@ immediately:
 ```python
 process = BlackScholesMertonProcess.from_term_structures(
     spot=SimpleQuote(100.0),
+    maturity=1.0,
     risk_free_curve=FlatYieldCurve(rate=0.05),
     dividend_curve=FlatYieldCurve(rate=0.0),
     volatility=FlatBlackVolatility(0.20),
@@ -523,6 +524,11 @@ process = BlackScholesMertonProcess.from_term_structures(
 
 This avoids breaking Phase 1 code while opening a path toward reusable market
 data.
+
+The constructor should use snapshot semantics: it reads the current quote, curve,
+and volatility values for the supplied maturity and returns an ordinary flat
+`BlackScholesMertonProcess`. Updating the quote later should not mutate existing
+process objects.
 
 The internal representation can stay flat in Phase 2 if that keeps the code
 simple, but the API should make the intended direction clear.

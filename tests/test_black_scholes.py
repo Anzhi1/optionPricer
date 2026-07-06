@@ -4,8 +4,11 @@ from option_pricer import (
     AnalyticBlackScholesEngine,
     BlackScholesMertonProcess,
     EuropeanExercise,
+    FlatBlackVolatility,
+    FlatYieldCurve,
     OptionType,
     PlainVanillaPayoff,
+    SimpleQuote,
     VanillaOption,
 )
 
@@ -48,3 +51,23 @@ def test_analytic_black_scholes_put_benchmark() -> None:
     assert result.greeks.vega == pytest.approx(37.5240, abs=1e-4)
     assert result.greeks.theta == pytest.approx(-1.6579, abs=1e-4)
     assert result.greeks.rho == pytest.approx(-41.8905, abs=1e-4)
+
+
+def test_analytic_black_scholes_term_structure_process_matches_flat_process() -> None:
+    option = make_option(OptionType.CALL)
+    flat_process = make_process()
+    term_structure_process = BlackScholesMertonProcess.from_term_structures(
+        spot=SimpleQuote(100.0),
+        maturity=1.0,
+        risk_free_curve=FlatYieldCurve(rate=0.05),
+        dividend_curve=FlatYieldCurve(rate=0.0),
+        volatility=FlatBlackVolatility(0.20),
+    )
+
+    flat_result = AnalyticBlackScholesEngine(flat_process).calculate(option)
+    term_structure_result = AnalyticBlackScholesEngine(term_structure_process).calculate(option)
+
+    assert term_structure_result.value == pytest.approx(flat_result.value)
+    assert term_structure_result.greeks is not None
+    assert flat_result.greeks is not None
+    assert term_structure_result.greeks.delta == pytest.approx(flat_result.greeks.delta)

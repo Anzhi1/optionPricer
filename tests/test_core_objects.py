@@ -6,9 +6,12 @@ from option_pricer import (
     AmericanExercise,
     BlackScholesMertonProcess,
     EuropeanExercise,
+    FlatBlackVolatility,
+    FlatYieldCurve,
     OptionType,
     PlainVanillaPayoff,
     PricingResult,
+    SimpleQuote,
     VanillaOption,
 )
 
@@ -67,6 +70,36 @@ def test_black_scholes_merton_process_helpers() -> None:
     assert process.discount_factor(1.0) == pytest.approx(math.exp(-0.05))
     assert process.dividend_discount_factor(1.0) == pytest.approx(math.exp(-0.02))
     assert process.forward(1.0) == pytest.approx(100.0 * math.exp(0.03))
+
+
+def test_black_scholes_merton_process_from_term_structures() -> None:
+    process = BlackScholesMertonProcess.from_term_structures(
+        spot=SimpleQuote(100.0),
+        maturity=1.0,
+        risk_free_curve=FlatYieldCurve(rate=0.05),
+        dividend_curve=FlatYieldCurve(rate=0.02),
+        volatility=FlatBlackVolatility(0.20),
+    )
+
+    assert process.spot == 100.0
+    assert process.risk_free_rate == 0.05
+    assert process.dividend_yield == 0.02
+    assert process.volatility == 0.20
+
+
+def test_black_scholes_merton_process_from_term_structures_is_snapshot() -> None:
+    spot = SimpleQuote(100.0)
+    process = BlackScholesMertonProcess.from_term_structures(
+        spot=spot,
+        maturity=1.0,
+        risk_free_curve=FlatYieldCurve(rate=0.05),
+        dividend_curve=FlatYieldCurve(rate=0.02),
+        volatility=FlatBlackVolatility(0.20),
+    )
+
+    spot.value = 101.0
+
+    assert process.spot == 100.0
 
 
 def test_black_scholes_merton_process_validation() -> None:
