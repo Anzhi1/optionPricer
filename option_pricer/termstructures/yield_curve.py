@@ -5,6 +5,7 @@ from math import exp, isfinite, log
 from typing import Protocol
 
 from option_pricer.math.interpolation import linear_interpolate
+from option_pricer.termstructures.base import time_from_maturity, validate_date_configuration
 from option_pricer.time.daycounters import DayCounter
 
 
@@ -28,14 +29,14 @@ class FlatYieldCurve:
 
     def __post_init__(self) -> None:
         _validate_finite(self.rate, "rate")
-        _validate_date_configuration(self.reference_date, self.day_count)
+        validate_date_configuration(self.reference_date, self.day_count)
 
     def discount(self, maturity: float | date) -> float:
-        time = _time_from_maturity(maturity, self.reference_date, self.day_count)
+        time = time_from_maturity(maturity, self.reference_date, self.day_count)
         return exp(-self.rate * time)
 
     def zero_rate(self, maturity: float | date) -> float:
-        _time_from_maturity(maturity, self.reference_date, self.day_count)
+        time_from_maturity(maturity, self.reference_date, self.day_count)
         return self.rate
 
 
@@ -50,15 +51,15 @@ class ZeroCurve:
 
     def __post_init__(self) -> None:
         _validate_curve_inputs(self.times, self.zero_rates, "zero_rates")
-        _validate_date_configuration(self.reference_date, self.day_count)
+        validate_date_configuration(self.reference_date, self.day_count)
 
     def discount(self, maturity: float | date) -> float:
-        time = _time_from_maturity(maturity, self.reference_date, self.day_count)
+        time = time_from_maturity(maturity, self.reference_date, self.day_count)
         rate = self.zero_rate(time)
         return exp(-rate * time)
 
     def zero_rate(self, maturity: float | date) -> float:
-        time = _time_from_maturity(maturity, self.reference_date, self.day_count)
+        time = time_from_maturity(maturity, self.reference_date, self.day_count)
         return linear_interpolate(time, self.times, self.zero_rates)
 
 
@@ -75,42 +76,18 @@ class DiscountCurve:
         _validate_curve_inputs(self.times, self.discount_factors, "discount_factors")
         if any(discount <= 0.0 for discount in self.discount_factors):
             raise ValueError("discount_factors must be positive")
-        _validate_date_configuration(self.reference_date, self.day_count)
+        validate_date_configuration(self.reference_date, self.day_count)
 
     def discount(self, maturity: float | date) -> float:
-        time = _time_from_maturity(maturity, self.reference_date, self.day_count)
+        time = time_from_maturity(maturity, self.reference_date, self.day_count)
         log_discounts = [log(discount) for discount in self.discount_factors]
         return exp(linear_interpolate(time, self.times, log_discounts))
 
     def zero_rate(self, maturity: float | date) -> float:
-        time = _time_from_maturity(maturity, self.reference_date, self.day_count)
+        time = time_from_maturity(maturity, self.reference_date, self.day_count)
         if time == 0.0:
             raise ValueError("zero rate is undefined at time zero")
         return -log(self.discount(time)) / time
-
-
-def _time_from_maturity(
-    maturity: float | date,
-    reference_date: date | None,
-    day_count: DayCounter | None,
-) -> float:
-    if isinstance(maturity, date):
-        if reference_date is None or day_count is None:
-            raise ValueError("date maturity requires reference_date and day_count")
-        time = day_count.year_fraction(reference_date, maturity)
-    else:
-        time = float(maturity)
-
-    if not isfinite(time):
-        raise ValueError("maturity must be finite")
-    if time < 0.0:
-        raise ValueError("maturity must be non-negative")
-    return time
-
-
-def _validate_date_configuration(reference_date: date | None, day_count: DayCounter | None) -> None:
-    if (reference_date is None) != (day_count is None):
-        raise ValueError("reference_date and day_count must be provided together")
 
 
 def _validate_curve_inputs(xs: Sequence[float], ys: Sequence[float], value_name: str) -> None:
