@@ -144,11 +144,37 @@ Conventions:
 The analytic Black-style engine can support this instrument by extracting the
 same payoff and maturity data used for the generic `VanillaOption`.
 
+## Black-76 Process
+
+Location: `option_pricer.processes.black76`
+
+`Black76Process` represents options on forwards or futures. It keeps the process
+focused on the forward, discounting, and Black volatility inputs rather than
+commodity-specific storage or delivery conventions.
+
+Fields:
+
+- `forward: float`
+- `discount_rate_value: float`
+- `volatility: float`
+
+Behavior:
+
+- Discount factor: `exp(-discount_rate_value * t)`
+- The forward is exposed as the Black-style underlying input.
+- The underlying discount factor equals the discount factor, so the shared
+  analytic Black-style engine produces the standard Black-76 formula.
+
+The first implementation supports analytic European vanilla pricing. Monte
+Carlo and tree engines still model spot-style dynamics and should be generalized
+separately before being used for Black-76 products.
+
 ## First Exit Criteria
 
 - `Currency` and `CurrencyPair` are tested.
 - `FxVanillaOption` is tested.
 - `GarmanKohlhagenProcess` helpers are tested.
+- `Black76Process` helpers are tested.
 - Term-structure construction works with existing yield and volatility curves.
 - Existing `AnalyticBlackScholesEngine` can price a European FX vanilla option.
 - A runnable FX example demonstrates the intended API.

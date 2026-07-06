@@ -12,6 +12,7 @@ from option_pricer.market.quotes import SimpleQuote
 from option_pricer.math.interpolation import linear_interpolate
 from option_pricer.payoffs.vanilla import OptionType, PlainVanillaPayoff
 from option_pricer.processes.black_scholes_merton import BlackScholesMertonProcess
+from option_pricer.processes.black76 import Black76Process
 from option_pricer.processes.garman_kohlhagen import GarmanKohlhagenProcess
 from option_pricer.results.greeks import Greeks
 from option_pricer.results.pricing_result import PricingResult
@@ -28,6 +29,7 @@ __all__ = [
     "AnalyticBlackScholesEngine",
     "BinomialTreeEngine",
     "BlackVolCurve",
+    "Black76Process",
     "BlackScholesMertonProcess",
     "BusinessDayConvention",
     "Currency",
