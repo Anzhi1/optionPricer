@@ -16,6 +16,7 @@ from option_pricer.processes.black76 import Black76Process
 from option_pricer.processes.garman_kohlhagen import GarmanKohlhagenProcess
 from option_pricer.results.greeks import Greeks
 from option_pricer.results.pricing_result import PricingResult
+from option_pricer.termstructures.forward_curve import FlatForwardCurve, ForwardCurve
 from option_pricer.termstructures.volatility import BlackVolCurve, FlatBlackVolatility, FlatVolatility
 from option_pricer.termstructures.yield_curve import DiscountCurve, FlatYieldCurve, ZeroCurve
 from option_pricer.time.business_day import BusinessDayConvention, adjust
@@ -38,8 +39,10 @@ __all__ = [
     "EuropeanExercise",
     "EuropeanMonteCarloEngine",
     "FlatBlackVolatility",
+    "FlatForwardCurve",
     "FlatYieldCurve",
     "FlatVolatility",
+    "ForwardCurve",
     "FxVanillaOption",
     "GarmanKohlhagenProcess",
     "Greeks",

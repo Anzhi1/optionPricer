@@ -39,6 +39,10 @@ option_pricer/
 
   processes/
     garman_kohlhagen.py
+    black76.py
+
+  termstructures/
+    forward_curve.py
 ```
 
 ## Currency
@@ -170,12 +174,32 @@ lognormal Monte Carlo, and Cox-Ross-Rubinstein trees through the shared
 `BlackStyleProcess` protocol. These engines are Black-style lognormal engines,
 not general-purpose engines for arbitrary future models.
 
+## Forward Curves
+
+Location: `option_pricer.termstructures.forward_curve`
+
+Forward price curves provide the minimal term-structure support needed by
+Black-76 examples.
+
+Initial implementations:
+
+- `FlatForwardCurve`
+- `ForwardCurve`
+
+Behavior:
+
+- `forward(maturity)` returns a positive forward price.
+- Date maturities are supported when the curve has `reference_date` and
+  `day_count`.
+- `ForwardCurve` uses linear interpolation and no extrapolation by default.
+
 ## First Exit Criteria
 
 - `Currency` and `CurrencyPair` are tested.
 - `FxVanillaOption` is tested.
 - `GarmanKohlhagenProcess` helpers are tested.
 - `Black76Process` helpers are tested.
+- Forward price curves are tested.
 - Term-structure construction works with existing yield and volatility curves.
 - Existing `AnalyticBlackScholesEngine` can price a European FX vanilla option.
 - A runnable FX example demonstrates the intended API.

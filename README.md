@@ -189,6 +189,22 @@ Strike is accepted by the `black_vol` API but ignored by Phase 2 flat and term
 curves. This leaves room for smile and surface support later without forcing it
 into the first volatility implementation.
 
+## Forward Curves
+
+Forward prices can be represented as flat or interpolated term structures for
+Black-76 style pricing:
+
+```python
+from option_pricer import ForwardCurve
+
+forward_curve = ForwardCurve(
+    times=[0.5, 1.0, 2.0],
+    forwards=[98.0, 100.0, 105.0],
+)
+
+print(forward_curve.forward(1.0))
+```
+
 ## Term-Structure-Based Process
 
 `BlackScholesMertonProcess` can still be built from flat numeric inputs, but it

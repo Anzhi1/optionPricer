@@ -3,6 +3,7 @@ from datetime import date
 from math import exp
 
 from option_pricer.market.quotes import SimpleQuote
+from option_pricer.termstructures.forward_curve import ForwardTermStructure
 from option_pricer.termstructures.volatility import BlackVolTermStructure
 from option_pricer.termstructures.yield_curve import YieldTermStructure
 
@@ -30,6 +31,24 @@ class Black76Process:
         forward_value = forward.value if isinstance(forward, SimpleQuote) else float(forward)
         return cls(
             forward=forward_value,
+            discount_rate_value=discount_curve.zero_rate(maturity),
+            volatility=volatility.black_vol(maturity, strike=strike),
+        )
+
+    @classmethod
+    def from_forward_curve(
+        cls,
+        *,
+        forward_curve: ForwardTermStructure,
+        maturity: float | date,
+        discount_curve: YieldTermStructure,
+        volatility: BlackVolTermStructure,
+        strike: float | None = None,
+    ) -> "Black76Process":
+        """Create a flat Black-76 snapshot from forward, discount, and volatility curves."""
+
+        return cls(
+            forward=forward_curve.forward(maturity),
             discount_rate_value=discount_curve.zero_rate(maturity),
             volatility=volatility.black_vol(maturity, strike=strike),
         )

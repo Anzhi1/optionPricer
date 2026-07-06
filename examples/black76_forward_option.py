@@ -4,9 +4,9 @@ from option_pricer import (
     EuropeanExercise,
     FlatBlackVolatility,
     FlatYieldCurve,
+    ForwardCurve,
     OptionType,
     PlainVanillaPayoff,
-    SimpleQuote,
     VanillaOption,
 )
 
@@ -16,8 +16,8 @@ option = VanillaOption(
     exercise=EuropeanExercise(maturity=1.0),
 )
 
-process = Black76Process.from_term_structures(
-    forward=SimpleQuote(100.0),
+process = Black76Process.from_forward_curve(
+    forward_curve=ForwardCurve(times=[0.5, 1.0, 2.0], forwards=[98.0, 100.0, 105.0]),
     maturity=option.exercise.maturity,
     discount_curve=FlatYieldCurve(rate=0.05),
     volatility=FlatBlackVolatility(0.20),

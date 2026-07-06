@@ -7,6 +7,7 @@ from option_pricer import (
     Black76Process,
     EuropeanExercise,
     FlatBlackVolatility,
+    ForwardCurve,
     FlatYieldCurve,
     OptionType,
     PlainVanillaPayoff,
@@ -45,6 +46,20 @@ def test_black76_process_from_term_structures_is_snapshot() -> None:
     forward.value = 101.0
 
     assert process.forward == 100.0
+    assert process.discount_rate_value == 0.05
+    assert process.volatility == 0.20
+
+
+def test_black76_process_from_forward_curve() -> None:
+    process = Black76Process.from_forward_curve(
+        forward_curve=ForwardCurve(times=[1.0, 2.0], forwards=[100.0, 110.0]),
+        maturity=1.5,
+        discount_curve=FlatYieldCurve(rate=0.05),
+        volatility=FlatBlackVolatility(0.20),
+        strike=105.0,
+    )
+
+    assert process.forward == pytest.approx(105.0)
     assert process.discount_rate_value == 0.05
     assert process.volatility == 0.20
 
