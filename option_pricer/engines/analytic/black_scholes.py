@@ -3,6 +3,7 @@ from math import log, sqrt
 from typing import Protocol
 
 from option_pricer.exercise.european import EuropeanExercise
+from option_pricer.instruments.fx_option import FxVanillaOption
 from option_pricer.instruments.vanilla_option import VanillaOption
 from option_pricer.math.distributions import normal_cdf, normal_pdf
 from option_pricer.payoffs.vanilla import OptionType, PlainVanillaPayoff
@@ -37,16 +38,8 @@ class AnalyticBlackScholesEngine:
 
     process: BlackStyleProcess
 
-    def calculate(self, instrument: VanillaOption) -> PricingResult:
-        if not isinstance(instrument, VanillaOption):
-            raise TypeError("AnalyticBlackScholesEngine supports VanillaOption only")
-        if not isinstance(instrument.payoff, PlainVanillaPayoff):
-            raise TypeError("AnalyticBlackScholesEngine supports PlainVanillaPayoff only")
-        if not isinstance(instrument.exercise, EuropeanExercise):
-            raise TypeError("AnalyticBlackScholesEngine supports EuropeanExercise only")
-
-        payoff = instrument.payoff
-        maturity = instrument.exercise.maturity
+    def calculate(self, instrument: VanillaOption | FxVanillaOption) -> PricingResult:
+        payoff, maturity = self._vanilla_payoff_and_maturity(instrument)
         d1, d2 = self._d1_d2(payoff.strike, maturity)
 
         spot = self.process.spot
@@ -94,3 +87,15 @@ class AnalyticBlackScholesEngine:
             log(spot / strike) + (discount_rate - carry_rate + 0.5 * volatility * volatility) * maturity
         ) / variance_root
         return d1, d1 - variance_root
+
+    def _vanilla_payoff_and_maturity(
+        self,
+        instrument: VanillaOption | FxVanillaOption,
+    ) -> tuple[PlainVanillaPayoff, float]:
+        if not isinstance(instrument, (VanillaOption, FxVanillaOption)):
+            raise TypeError("AnalyticBlackScholesEngine supports VanillaOption and FxVanillaOption only")
+        if not isinstance(instrument.payoff, PlainVanillaPayoff):
+            raise TypeError("AnalyticBlackScholesEngine supports PlainVanillaPayoff only")
+        if not isinstance(instrument.exercise, EuropeanExercise):
+            raise TypeError("AnalyticBlackScholesEngine supports EuropeanExercise only")
+        return instrument.payoff, instrument.exercise.maturity

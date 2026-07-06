@@ -5,17 +5,18 @@ from option_pricer import (
     EuropeanExercise,
     FlatBlackVolatility,
     FlatYieldCurve,
+    FxVanillaOption,
     GarmanKohlhagenProcess,
     OptionType,
     PlainVanillaPayoff,
     SimpleQuote,
-    VanillaOption,
 )
 
 
 pair = CurrencyPair(Currency("EUR"), Currency("USD"))
 
-option = VanillaOption(
+option = FxVanillaOption(
+    pair=pair,
     payoff=PlainVanillaPayoff(OptionType.CALL, strike=1.12),
     exercise=EuropeanExercise(maturity=1.0),
 )

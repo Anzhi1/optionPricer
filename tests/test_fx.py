@@ -9,6 +9,7 @@ from option_pricer import (
     EuropeanExercise,
     FlatBlackVolatility,
     FlatYieldCurve,
+    FxVanillaOption,
     GarmanKohlhagenProcess,
     OptionType,
     PlainVanillaPayoff,
@@ -57,6 +58,25 @@ def test_garman_kohlhagen_helpers() -> None:
     assert process.forward(1.0) == pytest.approx(1.10 * math.exp(0.03))
 
 
+def test_fx_vanilla_option_validation() -> None:
+    pair = CurrencyPair(Currency("EUR"), Currency("USD"))
+    option = FxVanillaOption(
+        pair=pair,
+        payoff=PlainVanillaPayoff(OptionType.CALL, strike=1.12),
+        exercise=EuropeanExercise(maturity=1.0),
+    )
+
+    assert option.pair.symbol == "EUR/USD"
+    assert option.payoff.strike == 1.12
+
+    with pytest.raises(TypeError, match="CurrencyPair"):
+        FxVanillaOption(
+            pair="EUR/USD",  # type: ignore[arg-type]
+            payoff=PlainVanillaPayoff(OptionType.CALL, strike=1.12),
+            exercise=EuropeanExercise(maturity=1.0),
+        )
+
+
 def test_garman_kohlhagen_from_term_structures_is_snapshot() -> None:
     spot = SimpleQuote(1.10)
     process = GarmanKohlhagenProcess.from_term_structures(
@@ -95,3 +115,27 @@ def test_garman_kohlhagen_process_prices_with_existing_analytic_engine() -> None
     assert result.value == pytest.approx(0.057955, abs=1e-6)
     assert result.greeks is not None
     assert result.greeks.delta == pytest.approx(0.552341, abs=1e-6)
+
+
+def test_fx_vanilla_option_matches_equivalent_vanilla_option() -> None:
+    pair = CurrencyPair(Currency("EUR"), Currency("USD"))
+    payoff = PlainVanillaPayoff(OptionType.CALL, strike=1.12)
+    exercise = EuropeanExercise(maturity=1.0)
+    vanilla_option = VanillaOption(payoff=payoff, exercise=exercise)
+    fx_option = FxVanillaOption(pair=pair, payoff=payoff, exercise=exercise)
+    process = GarmanKohlhagenProcess(
+        spot=1.10,
+        domestic_rate=0.05,
+        foreign_rate=0.02,
+        volatility=0.12,
+        pair=pair,
+    )
+
+    engine = AnalyticBlackScholesEngine(process)
+    vanilla_result = engine.calculate(vanilla_option)
+    fx_result = engine.calculate(fx_option)
+
+    assert fx_result.value == pytest.approx(vanilla_result.value)
+    assert fx_result.greeks is not None
+    assert vanilla_result.greeks is not None
+    assert fx_result.greeks.delta == pytest.approx(vanilla_result.greeks.delta)

@@ -34,6 +34,9 @@ option_pricer/
   market/
     currencies.py
 
+  instruments/
+    fx_option.py
+
   processes/
     garman_kohlhagen.py
 ```
@@ -118,11 +121,33 @@ process = GarmanKohlhagenProcess.from_term_structures(
 
 Updating the quote or curves later should not mutate the process.
 
+## FX Vanilla Option
+
+Location: `option_pricer.instruments.fx_option`
+
+`FxVanillaOption` should add FX contract semantics while reusing the existing
+plain vanilla payoff and exercise abstractions.
+
+Fields:
+
+- `pair: CurrencyPair`
+- `payoff: PlainVanillaPayoff`
+- `exercise: Exercise`
+
+Conventions:
+
+- Spot and strike are quote currency units per one base currency unit.
+- Option value is in quote currency units per one base notional.
+- Notional is intentionally deferred until examples need position scaling.
+
+The analytic Black-style engine can support this instrument by extracting the
+same payoff and maturity data used for the generic `VanillaOption`.
+
 ## First Exit Criteria
 
 - `Currency` and `CurrencyPair` are tested.
+- `FxVanillaOption` is tested.
 - `GarmanKohlhagenProcess` helpers are tested.
 - Term-structure construction works with existing yield and volatility curves.
 - Existing `AnalyticBlackScholesEngine` can price a European FX vanilla option.
 - A runnable FX example demonstrates the intended API.
-
