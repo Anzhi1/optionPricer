@@ -5,15 +5,15 @@ from option_pricer.exercise.american import AmericanExercise
 from option_pricer.exercise.european import EuropeanExercise
 from option_pricer.instruments.vanilla_option import VanillaOption
 from option_pricer.payoffs.vanilla import PlainVanillaPayoff
-from option_pricer.processes.black_scholes_merton import BlackScholesMertonProcess
+from option_pricer.processes.black_style import BlackStyleProcess
 from option_pricer.results.pricing_result import PricingResult
 
 
 @dataclass(frozen=True)
 class BinomialTreeEngine:
-    """Cox-Ross-Rubinstein tree engine for vanilla options."""
+    """Cox-Ross-Rubinstein tree engine for Black-style vanilla options."""
 
-    process: BlackScholesMertonProcess
+    process: BlackStyleProcess
     steps: int = 200
 
     def __post_init__(self) -> None:
@@ -32,12 +32,12 @@ class BinomialTreeEngine:
         dt = maturity / self.steps
         up = exp(self.process.volatility * sqrt(dt))
         down = 1.0 / up
-        growth = exp((self.process.risk_free_rate - self.process.dividend_yield) * dt)
+        growth = exp((self.process.discount_rate - self.process.carry_rate) * dt)
         probability = (growth - down) / (up - down)
         if not 0.0 <= probability <= 1.0:
             raise ValueError("tree risk-neutral probability is outside [0, 1]")
 
-        step_discount = exp(-self.process.risk_free_rate * dt)
+        step_discount = exp(-self.process.discount_rate * dt)
         values = [
             instrument.payoff(self.process.spot * (up ** j) * (down ** (self.steps - j)))
             for j in range(self.steps + 1)

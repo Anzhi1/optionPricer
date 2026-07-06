@@ -4,6 +4,7 @@ np = pytest.importorskip("numpy")
 
 from option_pricer import (  # noqa: E402
     AnalyticBlackScholesEngine,
+    Black76Process,
     BlackScholesMertonProcess,
     EuropeanExercise,
     EuropeanMonteCarloEngine,
@@ -46,6 +47,16 @@ def test_monte_carlo_call_is_close_to_analytic_value() -> None:
     assert result.value == pytest.approx(analytic, abs=0.15)
     assert result.diagnostics is not None
     assert result.diagnostics["standard_error"] > 0.0
+
+
+def test_monte_carlo_black76_call_is_close_to_analytic_value() -> None:
+    process = Black76Process(forward=100.0, discount_rate_value=0.05, volatility=0.20)
+    option = make_call()
+
+    analytic = AnalyticBlackScholesEngine(process).calculate(option).value
+    result = EuropeanMonteCarloEngine(process, paths=100_000, seed=11).calculate(option)
+
+    assert result.value == pytest.approx(analytic, abs=0.15)
 
 
 def test_monte_carlo_antithetic_records_diagnostics() -> None:

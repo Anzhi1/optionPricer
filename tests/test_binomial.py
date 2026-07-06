@@ -4,6 +4,7 @@ from option_pricer import (
     AnalyticBlackScholesEngine,
     AmericanExercise,
     BinomialTreeEngine,
+    Black76Process,
     BlackScholesMertonProcess,
     EuropeanExercise,
     OptionType,
@@ -34,6 +35,16 @@ def test_binomial_european_call_converges_to_analytic_value() -> None:
 def test_binomial_european_put_converges_to_analytic_value() -> None:
     process = make_process()
     option = make_option(OptionType.PUT, EuropeanExercise(1.0))
+
+    analytic = AnalyticBlackScholesEngine(process).calculate(option).value
+    tree = BinomialTreeEngine(process, steps=500).calculate(option)
+
+    assert tree.value == pytest.approx(analytic, abs=0.02)
+
+
+def test_binomial_black76_european_call_converges_to_analytic_value() -> None:
+    process = Black76Process(forward=100.0, discount_rate_value=0.05, volatility=0.20)
+    option = make_option(OptionType.CALL, EuropeanExercise(1.0))
 
     analytic = AnalyticBlackScholesEngine(process).calculate(option).value
     tree = BinomialTreeEngine(process, steps=500).calculate(option)

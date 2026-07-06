@@ -165,9 +165,10 @@ Behavior:
 - The underlying discount factor equals the discount factor, so the shared
   analytic Black-style engine produces the standard Black-76 formula.
 
-The first implementation supports analytic European vanilla pricing. Monte
-Carlo and tree engines still model spot-style dynamics and should be generalized
-separately before being used for Black-76 products.
+The first implementation supports analytic European vanilla pricing, terminal
+lognormal Monte Carlo, and Cox-Ross-Rubinstein trees through the shared
+`BlackStyleProcess` protocol. These engines are Black-style lognormal engines,
+not general-purpose engines for arbitrary future models.
 
 ## First Exit Criteria
 

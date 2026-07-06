@@ -4,15 +4,15 @@ from math import sqrt
 from option_pricer.exercise.european import EuropeanExercise
 from option_pricer.instruments.vanilla_option import VanillaOption
 from option_pricer.payoffs.vanilla import PlainVanillaPayoff
-from option_pricer.processes.black_scholes_merton import BlackScholesMertonProcess
+from option_pricer.processes.black_style import BlackStyleProcess
 from option_pricer.results.pricing_result import PricingResult
 
 
 @dataclass(frozen=True)
 class EuropeanMonteCarloEngine:
-    """Terminal-spot Monte Carlo engine for European vanilla options."""
+    """Terminal lognormal Monte Carlo engine for European Black-style vanilla options."""
 
-    process: BlackScholesMertonProcess
+    process: BlackStyleProcess
     paths: int = 100_000
     seed: int | None = None
     antithetic: bool = False
@@ -46,8 +46,8 @@ class EuropeanMonteCarloEngine:
             normals = rng.standard_normal(self.paths)
 
         drift = (
-            self.process.risk_free_rate
-            - self.process.dividend_yield
+            self.process.discount_rate
+            - self.process.carry_rate
             - 0.5 * self.process.volatility * self.process.volatility
         ) * maturity
         diffusion = self.process.volatility * sqrt(maturity) * normals
