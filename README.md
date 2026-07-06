@@ -92,6 +92,7 @@ Run examples through `uv` so they use the project environment:
 py -m uv run python examples/analytic_black_scholes.py
 py -m uv run python examples/binomial_european_american.py
 py -m uv run python examples/monte_carlo_vs_analytic.py
+py -m uv run python examples/term_structure_black_scholes.py
 ```
 
 The examples are intentionally small. They are meant to show how the core

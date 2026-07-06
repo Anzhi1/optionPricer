@@ -1,8 +1,10 @@
 import math
+from datetime import date
 
 import pytest
 
 from option_pricer import (
+    Actual365Fixed,
     AmericanExercise,
     BlackScholesMertonProcess,
     EuropeanExercise,
@@ -48,6 +50,35 @@ def test_exercise_validation() -> None:
         EuropeanExercise(maturity=0.0)
     with pytest.raises(ValueError):
         AmericanExercise(maturity=0.0)
+
+
+def test_exercise_from_dates() -> None:
+    day_count = Actual365Fixed()
+    evaluation_date = date(2026, 7, 2)
+    expiry_date = date(2027, 7, 2)
+
+    european = EuropeanExercise.from_dates(
+        evaluation_date=evaluation_date,
+        expiry_date=expiry_date,
+        day_count=day_count,
+    )
+    american = AmericanExercise.from_dates(
+        evaluation_date=evaluation_date,
+        expiry_date=expiry_date,
+        day_count=day_count,
+    )
+
+    assert european.maturity == pytest.approx(1.0)
+    assert american.maturity == pytest.approx(1.0)
+
+
+def test_exercise_from_dates_rejects_reversed_dates() -> None:
+    with pytest.raises(ValueError, match="end date"):
+        EuropeanExercise.from_dates(
+            evaluation_date=date(2027, 7, 2),
+            expiry_date=date(2026, 7, 2),
+            day_count=Actual365Fixed(),
+        )
 
 
 def test_vanilla_option_validation() -> None:
