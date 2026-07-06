@@ -85,7 +85,6 @@ Fields:
 - `domestic_rate: float`
 - `foreign_rate: float`
 - `volatility: float`
-- `pair: CurrencyPair | None = None`
 
 Validation:
 
@@ -115,7 +114,6 @@ process = GarmanKohlhagenProcess.from_term_structures(
     domestic_curve=usd_curve,
     foreign_curve=eur_curve,
     volatility=eurusd_vol,
-    pair=CurrencyPair(Currency("EUR"), Currency("USD")),
 )
 ```
 

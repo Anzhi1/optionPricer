@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from datetime import date
 from math import exp
 
-from option_pricer.market.currencies import CurrencyPair
 from option_pricer.market.quotes import SimpleQuote
 from option_pricer.termstructures.volatility import BlackVolTermStructure
 from option_pricer.termstructures.yield_curve import YieldTermStructure
@@ -16,7 +15,6 @@ class GarmanKohlhagenProcess:
     domestic_rate: float
     foreign_rate: float
     volatility: float
-    pair: CurrencyPair | None = None
 
     @classmethod
     def from_term_structures(
@@ -27,7 +25,6 @@ class GarmanKohlhagenProcess:
         domestic_curve: YieldTermStructure,
         foreign_curve: YieldTermStructure,
         volatility: BlackVolTermStructure,
-        pair: CurrencyPair | None = None,
         strike: float | None = None,
     ) -> "GarmanKohlhagenProcess":
         """Create a flat FX process snapshot from quote, curves, and volatility."""
@@ -38,7 +35,6 @@ class GarmanKohlhagenProcess:
             domestic_rate=domestic_curve.zero_rate(maturity),
             foreign_rate=foreign_curve.zero_rate(maturity),
             volatility=volatility.black_vol(maturity, strike=strike),
-            pair=pair,
         )
 
     def __post_init__(self) -> None:
@@ -46,8 +42,6 @@ class GarmanKohlhagenProcess:
             raise ValueError("spot must be positive")
         if self.volatility <= 0:
             raise ValueError("volatility must be positive")
-        if self.pair is not None and not isinstance(self.pair, CurrencyPair):
-            raise TypeError("pair must be a CurrencyPair")
 
     @property
     def risk_free_rate(self) -> float:

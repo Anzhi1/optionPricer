@@ -48,7 +48,6 @@ def test_garman_kohlhagen_helpers() -> None:
         domestic_rate=0.05,
         foreign_rate=0.02,
         volatility=0.12,
-        pair=CurrencyPair(Currency("EUR"), Currency("USD")),
     )
 
     assert process.risk_free_rate == 0.05
@@ -108,7 +107,6 @@ def test_garman_kohlhagen_from_term_structures_is_snapshot() -> None:
         domestic_curve=FlatYieldCurve(rate=0.05),
         foreign_curve=FlatYieldCurve(rate=0.02),
         volatility=FlatBlackVolatility(0.12),
-        pair=CurrencyPair(Currency("EUR"), Currency("USD")),
         strike=1.12,
     )
 
@@ -130,7 +128,6 @@ def test_garman_kohlhagen_process_prices_with_existing_analytic_engine() -> None
         domestic_rate=0.05,
         foreign_rate=0.02,
         volatility=0.12,
-        pair=CurrencyPair(Currency("EUR"), Currency("USD")),
     )
 
     result = AnalyticBlackScholesEngine(process).calculate(option)
@@ -151,7 +148,6 @@ def test_fx_vanilla_option_matches_equivalent_vanilla_option() -> None:
         domestic_rate=0.05,
         foreign_rate=0.02,
         volatility=0.12,
-        pair=pair,
     )
 
     engine = AnalyticBlackScholesEngine(process)

@@ -28,7 +28,6 @@ process = GarmanKohlhagenProcess.from_term_structures(
     domestic_curve=FlatYieldCurve(rate=0.05),
     foreign_curve=FlatYieldCurve(rate=0.02),
     volatility=FlatBlackVolatility(0.12),
-    pair=pair,
     strike=1.12,
 )
 
