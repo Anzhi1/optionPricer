@@ -6,10 +6,12 @@ from option_pricer.engines.trees.binomial import BinomialTreeEngine
 from option_pricer.exercise.american import AmericanExercise
 from option_pricer.exercise.european import EuropeanExercise
 from option_pricer.instruments.vanilla_option import VanillaOption
+from option_pricer.market.currencies import Currency, CurrencyPair
 from option_pricer.market.quotes import SimpleQuote
 from option_pricer.math.interpolation import linear_interpolate
 from option_pricer.payoffs.vanilla import OptionType, PlainVanillaPayoff
 from option_pricer.processes.black_scholes_merton import BlackScholesMertonProcess
+from option_pricer.processes.garman_kohlhagen import GarmanKohlhagenProcess
 from option_pricer.results.greeks import Greeks
 from option_pricer.results.pricing_result import PricingResult
 from option_pricer.termstructures.volatility import BlackVolCurve, FlatBlackVolatility, FlatVolatility
@@ -27,12 +29,15 @@ __all__ = [
     "BlackVolCurve",
     "BlackScholesMertonProcess",
     "BusinessDayConvention",
+    "Currency",
+    "CurrencyPair",
     "DiscountCurve",
     "EuropeanExercise",
     "EuropeanMonteCarloEngine",
     "FlatBlackVolatility",
     "FlatYieldCurve",
     "FlatVolatility",
+    "GarmanKohlhagenProcess",
     "Greeks",
     "HolidayCalendar",
     "NullCalendar",

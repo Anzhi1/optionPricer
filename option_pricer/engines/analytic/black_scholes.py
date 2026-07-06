@@ -1,20 +1,35 @@
 from dataclasses import dataclass
 from math import log, sqrt
+from typing import Protocol
 
 from option_pricer.exercise.european import EuropeanExercise
 from option_pricer.instruments.vanilla_option import VanillaOption
 from option_pricer.math.distributions import normal_cdf, normal_pdf
 from option_pricer.payoffs.vanilla import OptionType, PlainVanillaPayoff
-from option_pricer.processes.black_scholes_merton import BlackScholesMertonProcess
 from option_pricer.results.greeks import Greeks
 from option_pricer.results.pricing_result import PricingResult
+
+
+class BlackStyleProcess(Protocol):
+    """Process interface needed by the analytic Black-style vanilla engine."""
+
+    spot: float
+    risk_free_rate: float
+    dividend_yield: float
+    volatility: float
+
+    def discount_factor(self, maturity: float) -> float:
+        ...
+
+    def dividend_discount_factor(self, maturity: float) -> float:
+        ...
 
 
 @dataclass(frozen=True)
 class AnalyticBlackScholesEngine:
     """Analytic Black-Scholes-Merton engine for European vanilla options."""
 
-    process: BlackScholesMertonProcess
+    process: BlackStyleProcess
 
     def calculate(self, instrument: VanillaOption) -> PricingResult:
         if not isinstance(instrument, VanillaOption):
