@@ -19,6 +19,7 @@ option = FxVanillaOption(
     pair=pair,
     payoff=PlainVanillaPayoff(OptionType.CALL, strike=1.12),
     exercise=EuropeanExercise(maturity=1.0),
+    notional=1_000_000.0,
 )
 
 process = GarmanKohlhagenProcess.from_term_structures(
@@ -34,5 +35,6 @@ process = GarmanKohlhagenProcess.from_term_structures(
 result = AnalyticBlackScholesEngine(process).calculate(option)
 
 print(f"pair: {pair.symbol}")
-print(f"value: {result.value:.6f}")
+print(f"unit value: {result.value:.6f}")
+print(f"notional value: {option.notional_value(result.value):.2f} {pair.quote.code}")
 print(f"delta: {result.greeks.delta:.6f}")

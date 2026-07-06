@@ -133,12 +133,15 @@ Fields:
 - `pair: CurrencyPair`
 - `payoff: PlainVanillaPayoff`
 - `exercise: Exercise`
+- `notional: float = 1.0`
 
 Conventions:
 
 - Spot and strike are quote currency units per one base currency unit.
-- Option value is in quote currency units per one base notional.
-- Notional is intentionally deferred until examples need position scaling.
+- Engine values are quote currency units per one base notional.
+- Notional is a base-currency amount and is used only through explicit scaling.
+- `notional_value(unit_value)` converts a per-base-notional value to a quote
+  currency amount.
 
 The analytic Black-style engine can support this instrument by extracting the
 same payoff and maturity data used for the generic `VanillaOption`.

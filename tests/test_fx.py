@@ -68,6 +68,7 @@ def test_fx_vanilla_option_validation() -> None:
 
     assert option.pair.symbol == "EUR/USD"
     assert option.payoff.strike == 1.12
+    assert option.notional == 1.0
 
     with pytest.raises(TypeError, match="CurrencyPair"):
         FxVanillaOption(
@@ -75,6 +76,28 @@ def test_fx_vanilla_option_validation() -> None:
             payoff=PlainVanillaPayoff(OptionType.CALL, strike=1.12),
             exercise=EuropeanExercise(maturity=1.0),
         )
+
+    with pytest.raises(ValueError, match="notional"):
+        FxVanillaOption(
+            pair=pair,
+            payoff=PlainVanillaPayoff(OptionType.CALL, strike=1.12),
+            exercise=EuropeanExercise(maturity=1.0),
+            notional=0.0,
+        )
+
+
+def test_fx_vanilla_option_scales_unit_value_to_notional_amount() -> None:
+    option = FxVanillaOption(
+        pair=CurrencyPair(Currency("EUR"), Currency("USD")),
+        payoff=PlainVanillaPayoff(OptionType.CALL, strike=1.12),
+        exercise=EuropeanExercise(maturity=1.0),
+        notional=1_000_000.0,
+    )
+
+    assert option.notional_value(0.057955) == pytest.approx(57_955.0)
+
+    with pytest.raises(ValueError, match="unit_value"):
+        option.notional_value(float("nan"))
 
 
 def test_garman_kohlhagen_from_term_structures_is_snapshot() -> None:
@@ -122,7 +145,7 @@ def test_fx_vanilla_option_matches_equivalent_vanilla_option() -> None:
     payoff = PlainVanillaPayoff(OptionType.CALL, strike=1.12)
     exercise = EuropeanExercise(maturity=1.0)
     vanilla_option = VanillaOption(payoff=payoff, exercise=exercise)
-    fx_option = FxVanillaOption(pair=pair, payoff=payoff, exercise=exercise)
+    fx_option = FxVanillaOption(pair=pair, payoff=payoff, exercise=exercise, notional=1_000_000.0)
     process = GarmanKohlhagenProcess(
         spot=1.10,
         domestic_rate=0.05,
@@ -139,3 +162,4 @@ def test_fx_vanilla_option_matches_equivalent_vanilla_option() -> None:
     assert fx_result.greeks is not None
     assert vanilla_result.greeks is not None
     assert fx_result.greeks.delta == pytest.approx(vanilla_result.greeks.delta)
+    assert fx_option.notional_value(fx_result.value) == pytest.approx(fx_result.value * 1_000_000.0)
