@@ -61,6 +61,18 @@ class GarmanKohlhagenProcess:
 
         return self.foreign_rate
 
+    @property
+    def discount_rate(self) -> float:
+        """Domestic continuously compounded discount rate."""
+
+        return self.domestic_rate
+
+    @property
+    def carry_rate(self) -> float:
+        """Foreign continuously compounded carry rate."""
+
+        return self.foreign_rate
+
     def discount_factor(self, maturity: float) -> float:
         if maturity < 0:
             raise ValueError("maturity must be non-negative")
@@ -74,8 +86,10 @@ class GarmanKohlhagenProcess:
     def dividend_discount_factor(self, maturity: float) -> float:
         return self.foreign_discount_factor(maturity)
 
+    def underlying_discount_factor(self, maturity: float) -> float:
+        return self.foreign_discount_factor(maturity)
+
     def forward(self, maturity: float) -> float:
         if maturity < 0:
             raise ValueError("maturity must be non-negative")
         return self.spot * exp((self.domestic_rate - self.foreign_rate) * maturity)
-

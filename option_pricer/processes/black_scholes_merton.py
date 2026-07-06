@@ -43,10 +43,25 @@ class BlackScholesMertonProcess:
         if self.volatility <= 0:
             raise ValueError("volatility must be positive")
 
+    @property
+    def discount_rate(self) -> float:
+        """Continuously compounded discount rate for Black-style pricing."""
+
+        return self.risk_free_rate
+
+    @property
+    def carry_rate(self) -> float:
+        """Continuously compounded carry yield for the underlying."""
+
+        return self.dividend_yield
+
     def discount_factor(self, maturity: float) -> float:
         if maturity < 0:
             raise ValueError("maturity must be non-negative")
         return exp(-self.risk_free_rate * maturity)
+
+    def underlying_discount_factor(self, maturity: float) -> float:
+        return self.dividend_discount_factor(maturity)
 
     def dividend_discount_factor(self, maturity: float) -> float:
         if maturity < 0:

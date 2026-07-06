@@ -14,14 +14,20 @@ class BlackStyleProcess(Protocol):
     """Process interface needed by the analytic Black-style vanilla engine."""
 
     spot: float
-    risk_free_rate: float
-    dividend_yield: float
     volatility: float
+
+    @property
+    def discount_rate(self) -> float:
+        ...
+
+    @property
+    def carry_rate(self) -> float:
+        ...
 
     def discount_factor(self, maturity: float) -> float:
         ...
 
-    def dividend_discount_factor(self, maturity: float) -> float:
+    def underlying_discount_factor(self, maturity: float) -> float:
         ...
 
 
@@ -45,33 +51,33 @@ class AnalyticBlackScholesEngine:
 
         spot = self.process.spot
         strike = payoff.strike
-        rate = self.process.risk_free_rate
-        dividend = self.process.dividend_yield
+        discount_rate = self.process.discount_rate
+        carry_rate = self.process.carry_rate
         volatility = self.process.volatility
-        risk_discount = self.process.discount_factor(maturity)
-        dividend_discount = self.process.dividend_discount_factor(maturity)
+        discount_factor = self.process.discount_factor(maturity)
+        underlying_discount = self.process.underlying_discount_factor(maturity)
 
         if payoff.option_type is OptionType.CALL:
-            value = spot * dividend_discount * normal_cdf(d1) - strike * risk_discount * normal_cdf(d2)
-            delta = dividend_discount * normal_cdf(d1)
+            value = spot * underlying_discount * normal_cdf(d1) - strike * discount_factor * normal_cdf(d2)
+            delta = underlying_discount * normal_cdf(d1)
             theta = (
-                -spot * dividend_discount * normal_pdf(d1) * volatility / (2.0 * sqrt(maturity))
-                - rate * strike * risk_discount * normal_cdf(d2)
-                + dividend * spot * dividend_discount * normal_cdf(d1)
+                -spot * underlying_discount * normal_pdf(d1) * volatility / (2.0 * sqrt(maturity))
+                - discount_rate * strike * discount_factor * normal_cdf(d2)
+                + carry_rate * spot * underlying_discount * normal_cdf(d1)
             )
-            rho = strike * maturity * risk_discount * normal_cdf(d2)
+            rho = strike * maturity * discount_factor * normal_cdf(d2)
         else:
-            value = strike * risk_discount * normal_cdf(-d2) - spot * dividend_discount * normal_cdf(-d1)
-            delta = dividend_discount * (normal_cdf(d1) - 1.0)
+            value = strike * discount_factor * normal_cdf(-d2) - spot * underlying_discount * normal_cdf(-d1)
+            delta = underlying_discount * (normal_cdf(d1) - 1.0)
             theta = (
-                -spot * dividend_discount * normal_pdf(d1) * volatility / (2.0 * sqrt(maturity))
-                + rate * strike * risk_discount * normal_cdf(-d2)
-                - dividend * spot * dividend_discount * normal_cdf(-d1)
+                -spot * underlying_discount * normal_pdf(d1) * volatility / (2.0 * sqrt(maturity))
+                + discount_rate * strike * discount_factor * normal_cdf(-d2)
+                - carry_rate * spot * underlying_discount * normal_cdf(-d1)
             )
-            rho = -strike * maturity * risk_discount * normal_cdf(-d2)
+            rho = -strike * maturity * discount_factor * normal_cdf(-d2)
 
-        gamma = dividend_discount * normal_pdf(d1) / (spot * volatility * sqrt(maturity))
-        vega = spot * dividend_discount * normal_pdf(d1) * sqrt(maturity)
+        gamma = underlying_discount * normal_pdf(d1) / (spot * volatility * sqrt(maturity))
+        vega = spot * underlying_discount * normal_pdf(d1) * sqrt(maturity)
 
         return PricingResult(
             value=value,
@@ -80,9 +86,11 @@ class AnalyticBlackScholesEngine:
 
     def _d1_d2(self, strike: float, maturity: float) -> tuple[float, float]:
         spot = self.process.spot
-        rate = self.process.risk_free_rate
-        dividend = self.process.dividend_yield
+        discount_rate = self.process.discount_rate
+        carry_rate = self.process.carry_rate
         volatility = self.process.volatility
         variance_root = volatility * sqrt(maturity)
-        d1 = (log(spot / strike) + (rate - dividend + 0.5 * volatility * volatility) * maturity) / variance_root
+        d1 = (
+            log(spot / strike) + (discount_rate - carry_rate + 0.5 * volatility * volatility) * maturity
+        ) / variance_root
         return d1, d1 - variance_root
