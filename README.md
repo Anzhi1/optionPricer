@@ -3,12 +3,15 @@
 OptionPricer is a QuantLib-inspired pricing and valuation library for learning,
 research, and transparent financial engineering experiments.
 
-The first milestone focuses on a small vanilla option pricing stack:
+The current research build covers a small vanilla option pricing stack and its
+first extensions into term structures, FX, and forward/commodity-style options:
 
 - explicit instruments, payoffs, exercises, processes, and engines,
 - no observer, handle, lazy-evaluation, or global evaluation-date machinery,
-- year-fraction based inputs before calendars and day-count conventions are
-  introduced in later phases.
+- year-fraction inputs plus lightweight date, day-count, calendar, and curve
+  support,
+- Black-style lognormal pricing paths for equity-style, FX, and
+  forward/commodity examples.
 
 ## Development Setup
 
@@ -40,6 +43,8 @@ option_pricer/
   exercise/      exercise rules, such as EuropeanExercise and AmericanExercise
   processes/     market dynamics, such as BlackScholesMertonProcess
   engines/       pricing algorithms, such as analytic, tree, and Monte Carlo
+  market/        quotes, currencies, and lightweight asset descriptors
+  termstructures/ yield, volatility, and forward price curves
   results/       PricingResult and Greeks
   time/          day counters, calendars, and business-day adjustment
   math/          small numerical helpers
@@ -107,6 +112,8 @@ objects fit together:
 - `BlackScholesMertonProcess` holds flat market assumptions.
 - Engines implement pricing methods without adding valuation logic to the
   product class.
+- FX and commodity examples add asset-specific contract semantics while reusing
+  payoffs, exercise definitions, processes, results, and Black-style engines.
 
 ## Time Conventions
 
@@ -234,19 +241,28 @@ This constructor takes a snapshot of the current quote, curve, and volatility
 values. Updating `spot.value` later does not mutate existing process objects;
 create a new process when market data changes.
 
-## Phase 1 Scope
+## Current Scope
 
 Supported:
 
 - European vanilla call and put options.
 - American vanilla call and put options through the binomial tree engine.
 - Analytic Black-Scholes-Merton pricing for European vanilla options.
-- Cox-Ross-Rubinstein binomial pricing.
-- European terminal-spot Monte Carlo pricing.
+- Cox-Ross-Rubinstein binomial pricing for Black-style lognormal processes.
+- European terminal lognormal Monte Carlo pricing for Black-style processes.
+- Minimal day counters, calendars, business-day adjustment, quotes, yield
+  curves, volatility curves, and forward price curves.
+- FX vanilla options through Garman-Kohlhagen.
+- Forward/futures-style options through Black-76.
+- A lightweight gold/precious-metal Black-76 example.
 
 Deferred to later phases:
 
-- Calendar dates, holidays, business-day adjustment, and day-count conventions.
-- Term structures and curve bootstrapping.
-- FX, commodity, and interest-rate products.
+- Curve bootstrapping from market instruments.
+- Volatility smiles and surfaces.
+- FX delta conventions and ATM/RR/BF quote conversion.
+- Commodity storage, delivery, location, lease-rate, and futures margining
+  conventions.
+- Interest-rate cashflows, schedules, bonds, and swaps.
+- General-purpose Monte Carlo/tree frameworks for arbitrary future models.
 - Observer, handle, lazy-evaluation, or global evaluation-date machinery.

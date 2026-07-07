@@ -358,12 +358,12 @@ process = GarmanKohlhagenProcess(
     domestic_rate=0.04,
     foreign_rate=0.02,
     volatility=0.12,
-    pair=CurrencyPair("USD", "CNH"),
 )
 ```
 
-The product and process can be FX-specific, while payoff, exercise, results, and
-many numerical utilities remain shared.
+The FX product carries the currency-pair contract semantics. The process keeps
+only the market-dynamics inputs needed by the model. Payoff, exercise, results,
+and many numerical utilities remain shared.
 
 FX should arrive before interest-rate products in the roadmap. It is a natural
 extension of the Phase 1 option architecture and requires less new infrastructure

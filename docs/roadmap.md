@@ -103,6 +103,8 @@ Non-goals:
 Goal: test whether the option architecture extends cleanly beyond equity-style
 spot products before introducing the larger rates cashflow framework.
 
+Status: implemented for the first research-oriented scope.
+
 Scope:
 
 - Currency and currency-pair descriptors.
@@ -118,6 +120,28 @@ Non-goals:
 - Full cross-currency curve construction.
 - Full commodity storage and delivery modeling.
 - Precious-metal market conventions beyond simple research examples.
+
+Implemented:
+
+- `Currency` and `CurrencyPair`.
+- `FxVanillaOption` with explicit base notional scaling.
+- `GarmanKohlhagenProcess`.
+- `Black76Process`.
+- `FlatForwardCurve` and `ForwardCurve`.
+- `Commodity` and `CommodityVanillaOption`.
+- FX, Black-76 forward, and gold Black-76 examples.
+- Reuse of payoff, exercise, results, and Black-style analytic, Monte Carlo,
+  and tree engines where the lognormal model assumptions match.
+
+Deferred:
+
+- FX delta conventions.
+- Premium-adjusted Greeks.
+- FX volatility smile/surface construction.
+- ATM/risk-reversal/butterfly quote conversion.
+- Commodity storage, delivery, location, lease-rate, and futures margining
+  conventions.
+- General-purpose Monte Carlo or tree frameworks for arbitrary future models.
 
 ## Phase 4: Interest Rate Products
 

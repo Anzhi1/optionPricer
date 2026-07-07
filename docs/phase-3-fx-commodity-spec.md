@@ -106,8 +106,10 @@ Behavior:
 - Forward: `spot * exp((domestic_rate - foreign_rate) * t)`
 
 The process should expose `risk_free_rate` and `dividend_yield` compatibility
-properties so the existing analytic Black-Scholes engine can price European
-vanilla FX options without duplicating formulas.
+properties for older Black-Scholes-style code, but Black-style engines should
+depend on the shared `BlackStyleProcess` interface. In that interface,
+Garman-Kohlhagen exposes `underlying_growth_rate = domestic_rate - foreign_rate`
+directly.
 
 ## Term-Structure Constructor
 
@@ -234,3 +236,22 @@ Conventions:
 - Existing `AnalyticBlackScholesEngine` can price a European FX vanilla option.
 - A runnable FX example demonstrates the intended API.
 - A runnable commodity or precious-metal example demonstrates Black-76 reuse.
+
+## Deferred Work
+
+The following topics are intentionally outside the first Phase 3 implementation:
+
+- FX delta conventions such as spot delta, forward delta, premium-adjusted spot
+  delta, and premium-adjusted forward delta.
+- FX volatility smile and surface construction.
+- ATM, risk-reversal, and butterfly quote conversion.
+- Volatility interpolation choices such as strike, delta, moneyness, or total
+  variance interpolation.
+- Commodity storage, delivery, location, lease-rate, and futures margining
+  conventions.
+- General-purpose Monte Carlo, tree, or finite-difference frameworks for models
+  such as Heston, local volatility, or short-rate models.
+
+These topics are important, but they belong in a later volatility-conventions or
+advanced-modeling phase after the simple Black-style product architecture has
+settled.
