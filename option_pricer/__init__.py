@@ -5,8 +5,10 @@ from option_pricer.engines.monte_carlo.european_option import EuropeanMonteCarlo
 from option_pricer.engines.trees.binomial import BinomialTreeEngine
 from option_pricer.exercise.american import AmericanExercise
 from option_pricer.exercise.european import EuropeanExercise
+from option_pricer.instruments.commodity_option import CommodityVanillaOption
 from option_pricer.instruments.fx_option import FxVanillaOption
 from option_pricer.instruments.vanilla_option import VanillaOption
+from option_pricer.market.assets import Commodity
 from option_pricer.market.currencies import Currency, CurrencyPair
 from option_pricer.market.quotes import SimpleQuote
 from option_pricer.math.interpolation import linear_interpolate
@@ -33,6 +35,8 @@ __all__ = [
     "Black76Process",
     "BlackScholesMertonProcess",
     "BusinessDayConvention",
+    "Commodity",
+    "CommodityVanillaOption",
     "Currency",
     "CurrencyPair",
     "DiscountCurve",

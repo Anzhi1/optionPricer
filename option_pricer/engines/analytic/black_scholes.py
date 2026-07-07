@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from math import log, sqrt
 
 from option_pricer.exercise.european import EuropeanExercise
+from option_pricer.instruments.commodity_option import CommodityVanillaOption
 from option_pricer.instruments.fx_option import FxVanillaOption
 from option_pricer.instruments.vanilla_option import VanillaOption
 from option_pricer.math.distributions import normal_cdf, normal_pdf
@@ -17,7 +18,7 @@ class AnalyticBlackScholesEngine:
 
     process: BlackStyleProcess
 
-    def calculate(self, instrument: VanillaOption | FxVanillaOption) -> PricingResult:
+    def calculate(self, instrument: VanillaOption | FxVanillaOption | CommodityVanillaOption) -> PricingResult:
         payoff, maturity = self._vanilla_payoff_and_maturity(instrument)
         d1, d2 = self._d1_d2(payoff.strike, maturity)
 
@@ -68,10 +69,13 @@ class AnalyticBlackScholesEngine:
 
     def _vanilla_payoff_and_maturity(
         self,
-        instrument: VanillaOption | FxVanillaOption,
+        instrument: VanillaOption | FxVanillaOption | CommodityVanillaOption,
     ) -> tuple[PlainVanillaPayoff, float]:
-        if not isinstance(instrument, (VanillaOption, FxVanillaOption)):
-            raise TypeError("AnalyticBlackScholesEngine supports VanillaOption and FxVanillaOption only")
+        if not isinstance(instrument, (VanillaOption, FxVanillaOption, CommodityVanillaOption)):
+            raise TypeError(
+                "AnalyticBlackScholesEngine supports VanillaOption, FxVanillaOption, "
+                "and CommodityVanillaOption only"
+            )
         if not isinstance(instrument.payoff, PlainVanillaPayoff):
             raise TypeError("AnalyticBlackScholesEngine supports PlainVanillaPayoff only")
         if not isinstance(instrument.exercise, EuropeanExercise):

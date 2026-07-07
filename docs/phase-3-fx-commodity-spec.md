@@ -32,9 +32,11 @@ asset-class packages.
 ```text
 option_pricer/
   market/
+    assets.py
     currencies.py
 
   instruments/
+    commodity_option.py
     fx_option.py
 
   processes/
@@ -195,13 +197,40 @@ Behavior:
   `day_count`.
 - `ForwardCurve` uses linear interpolation and no extrapolation by default.
 
+## Commodity Vanilla Option
+
+Location: `option_pricer.instruments.commodity_option`
+
+`CommodityVanillaOption` adds lightweight commodity contract semantics while
+reusing plain vanilla payoffs, European exercise, Black-76 processes, and
+Black-style engines.
+
+Fields:
+
+- `commodity: Commodity`
+- `currency: Currency`
+- `payoff: PlainVanillaPayoff`
+- `exercise: Exercise`
+- `quantity: float = 1.0`
+
+Conventions:
+
+- Forward and strike are quote currency units per one commodity unit.
+- Engine values are quote currency units per one commodity unit.
+- `notional_value(unit_value)` scales a per-unit value by quantity.
+- Storage, delivery, lease-rate, and location conventions are out of scope for
+  this first commodity example.
+
 ## First Exit Criteria
 
 - `Currency` and `CurrencyPair` are tested.
+- `Commodity` is tested.
 - `FxVanillaOption` is tested.
+- `CommodityVanillaOption` is tested.
 - `GarmanKohlhagenProcess` helpers are tested.
 - `Black76Process` helpers are tested.
 - Forward price curves are tested.
 - Term-structure construction works with existing yield and volatility curves.
 - Existing `AnalyticBlackScholesEngine` can price a European FX vanilla option.
 - A runnable FX example demonstrates the intended API.
+- A runnable commodity or precious-metal example demonstrates Black-76 reuse.
