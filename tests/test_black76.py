@@ -28,7 +28,7 @@ def test_black76_process_helpers() -> None:
 
     assert process.spot == 100.0
     assert process.discount_rate == 0.05
-    assert process.carry_rate == 0.05
+    assert process.underlying_growth_rate == 0.0
     assert process.discount_factor(1.0) == pytest.approx(math.exp(-0.05))
     assert process.underlying_discount_factor(1.0) == pytest.approx(math.exp(-0.05))
 

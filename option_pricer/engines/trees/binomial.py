@@ -32,7 +32,7 @@ class BinomialTreeEngine:
         dt = maturity / self.steps
         up = exp(self.process.volatility * sqrt(dt))
         down = 1.0 / up
-        growth = exp((self.process.discount_rate - self.process.carry_rate) * dt)
+        growth = exp(self.process.underlying_growth_rate * dt)
         probability = (growth - down) / (up - down)
         if not 0.0 <= probability <= 1.0:
             raise ValueError("tree risk-neutral probability is outside [0, 1]")

@@ -24,7 +24,7 @@ class AnalyticBlackScholesEngine:
         spot = self.process.spot
         strike = payoff.strike
         discount_rate = self.process.discount_rate
-        carry_rate = self.process.carry_rate
+        carry_yield = discount_rate - self.process.underlying_growth_rate
         volatility = self.process.volatility
         discount_factor = self.process.discount_factor(maturity)
         underlying_discount = self.process.underlying_discount_factor(maturity)
@@ -35,7 +35,7 @@ class AnalyticBlackScholesEngine:
             theta = (
                 -spot * underlying_discount * normal_pdf(d1) * volatility / (2.0 * sqrt(maturity))
                 - discount_rate * strike * discount_factor * normal_cdf(d2)
-                + carry_rate * spot * underlying_discount * normal_cdf(d1)
+                + carry_yield * spot * underlying_discount * normal_cdf(d1)
             )
             rho = strike * maturity * discount_factor * normal_cdf(d2)
         else:
@@ -44,7 +44,7 @@ class AnalyticBlackScholesEngine:
             theta = (
                 -spot * underlying_discount * normal_pdf(d1) * volatility / (2.0 * sqrt(maturity))
                 + discount_rate * strike * discount_factor * normal_cdf(-d2)
-                - carry_rate * spot * underlying_discount * normal_cdf(-d1)
+                - carry_yield * spot * underlying_discount * normal_cdf(-d1)
             )
             rho = -strike * maturity * discount_factor * normal_cdf(-d2)
 
@@ -58,12 +58,11 @@ class AnalyticBlackScholesEngine:
 
     def _d1_d2(self, strike: float, maturity: float) -> tuple[float, float]:
         spot = self.process.spot
-        discount_rate = self.process.discount_rate
-        carry_rate = self.process.carry_rate
+        growth_rate = self.process.underlying_growth_rate
         volatility = self.process.volatility
         variance_root = volatility * sqrt(maturity)
         d1 = (
-            log(spot / strike) + (discount_rate - carry_rate + 0.5 * volatility * volatility) * maturity
+            log(spot / strike) + (growth_rate + 0.5 * volatility * volatility) * maturity
         ) / variance_root
         return d1, d1 - variance_root
 

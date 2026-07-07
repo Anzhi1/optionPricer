@@ -62,10 +62,10 @@ class GarmanKohlhagenProcess:
         return self.domestic_rate
 
     @property
-    def carry_rate(self) -> float:
-        """Foreign continuously compounded carry rate."""
+    def underlying_growth_rate(self) -> float:
+        """Continuously compounded expected growth rate of the FX spot."""
 
-        return self.foreign_rate
+        return self.domestic_rate - self.foreign_rate
 
     def discount_factor(self, maturity: float) -> float:
         if maturity < 0:

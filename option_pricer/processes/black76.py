@@ -70,8 +70,8 @@ class Black76Process:
         return self.discount_rate_value
 
     @property
-    def carry_rate(self) -> float:
-        return self.discount_rate_value
+    def underlying_growth_rate(self) -> float:
+        return 0.0
 
     def discount_factor(self, maturity: float) -> float:
         if maturity < 0:

@@ -12,7 +12,7 @@ class BlackStyleProcess(Protocol):
         ...
 
     @property
-    def carry_rate(self) -> float:
+    def underlying_growth_rate(self) -> float:
         ...
 
     def discount_factor(self, maturity: float) -> float:

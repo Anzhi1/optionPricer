@@ -46,8 +46,7 @@ class EuropeanMonteCarloEngine:
             normals = rng.standard_normal(self.paths)
 
         drift = (
-            self.process.discount_rate
-            - self.process.carry_rate
+            self.process.underlying_growth_rate
             - 0.5 * self.process.volatility * self.process.volatility
         ) * maturity
         diffusion = self.process.volatility * sqrt(maturity) * normals

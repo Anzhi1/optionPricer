@@ -172,7 +172,9 @@ Behavior:
 The first implementation supports analytic European vanilla pricing, terminal
 lognormal Monte Carlo, and Cox-Ross-Rubinstein trees through the shared
 `BlackStyleProcess` protocol. These engines are Black-style lognormal engines,
-not general-purpose engines for arbitrary future models.
+not general-purpose engines for arbitrary future models. The protocol uses an
+explicit `underlying_growth_rate` so Black-Scholes-Merton, Garman-Kohlhagen, and
+Black-76 can each express their own underlying drift directly.
 
 ## Forward Curves
 

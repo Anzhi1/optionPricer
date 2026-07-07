@@ -50,10 +50,10 @@ class BlackScholesMertonProcess:
         return self.risk_free_rate
 
     @property
-    def carry_rate(self) -> float:
-        """Continuously compounded carry yield for the underlying."""
+    def underlying_growth_rate(self) -> float:
+        """Continuously compounded expected growth rate of the underlying."""
 
-        return self.dividend_yield
+        return self.risk_free_rate - self.dividend_yield
 
     def discount_factor(self, maturity: float) -> float:
         if maturity < 0:
