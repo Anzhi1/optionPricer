@@ -148,6 +148,8 @@ Deferred:
 Goal: introduce fixed-income instruments and curve-based valuation after the
 date, day-count, calendar, and curve foundations exist.
 
+Implementation details are defined in `docs/phase-4-rates-spec.md`.
+
 Scope:
 
 - Fixed-rate bonds.
