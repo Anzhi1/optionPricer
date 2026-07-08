@@ -18,6 +18,7 @@ from option_pricer.processes.black76 import Black76Process
 from option_pricer.processes.garman_kohlhagen import GarmanKohlhagenProcess
 from option_pricer.results.greeks import Greeks
 from option_pricer.results.pricing_result import PricingResult
+from option_pricer.schedules.schedule import DateGenerationRule, Frequency, Schedule, generate_schedule
 from option_pricer.termstructures.forward_curve import FlatForwardCurve, ForwardCurve
 from option_pricer.termstructures.volatility import BlackVolCurve, FlatBlackVolatility, FlatVolatility
 from option_pricer.termstructures.yield_curve import DiscountCurve, FlatYieldCurve, ZeroCurve
@@ -39,6 +40,7 @@ __all__ = [
     "CommodityVanillaOption",
     "Currency",
     "CurrencyPair",
+    "DateGenerationRule",
     "DiscountCurve",
     "EuropeanExercise",
     "EuropeanMonteCarloEngine",
@@ -47,6 +49,7 @@ __all__ = [
     "FlatYieldCurve",
     "FlatVolatility",
     "ForwardCurve",
+    "Frequency",
     "FxVanillaOption",
     "GarmanKohlhagenProcess",
     "Greeks",
@@ -55,10 +58,12 @@ __all__ = [
     "OptionType",
     "PlainVanillaPayoff",
     "PricingResult",
+    "Schedule",
     "SimpleQuote",
     "VanillaOption",
     "WeekendCalendar",
     "ZeroCurve",
     "adjust",
+    "generate_schedule",
     "linear_interpolate",
 ]
