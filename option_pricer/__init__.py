@@ -3,6 +3,7 @@
 from option_pricer.cashflows.cashflow import FixedCashflow
 from option_pricer.cashflows.fixed_rate import FixedRateCoupon
 from option_pricer.engines.analytic.black_scholes import AnalyticBlackScholesEngine
+from option_pricer.engines.discounting.cashflows import DiscountingCashflowEngine
 from option_pricer.engines.monte_carlo.european_option import EuropeanMonteCarloEngine
 from option_pricer.engines.trees.binomial import BinomialTreeEngine
 from option_pricer.exercise.american import AmericanExercise
@@ -44,6 +45,7 @@ __all__ = [
     "CurrencyPair",
     "DateGenerationRule",
     "DiscountCurve",
+    "DiscountingCashflowEngine",
     "EuropeanExercise",
     "EuropeanMonteCarloEngine",
     "FlatBlackVolatility",
