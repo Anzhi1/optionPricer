@@ -1,5 +1,7 @@
 """Public API for OptionPricer."""
 
+from option_pricer.cashflows.cashflow import FixedCashflow
+from option_pricer.cashflows.fixed_rate import FixedRateCoupon
 from option_pricer.engines.analytic.black_scholes import AnalyticBlackScholesEngine
 from option_pricer.engines.monte_carlo.european_option import EuropeanMonteCarloEngine
 from option_pricer.engines.trees.binomial import BinomialTreeEngine
@@ -48,6 +50,8 @@ __all__ = [
     "FlatForwardCurve",
     "FlatYieldCurve",
     "FlatVolatility",
+    "FixedCashflow",
+    "FixedRateCoupon",
     "ForwardCurve",
     "Frequency",
     "FxVanillaOption",
