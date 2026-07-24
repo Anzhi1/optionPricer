@@ -10,8 +10,9 @@ is to make those foundations reusable in a small cashflow framework.
 Status: the first fixed-income slice described in this document has been
 implemented. The second Phase 4 slice has started with simple forward-rate
 projection, forward-rate curves, lightweight Ibor indexes, and floating-rate
-coupons. Floating-rate notes are also implemented. The next work should build
-on this foundation with vanilla interest-rate swaps.
+coupons. Floating-rate notes and vanilla interest-rate swaps are also
+implemented. The next work should harden rates conventions and add richer
+testing around leg-level behavior.
 
 ## Goals
 
@@ -66,6 +67,7 @@ option_pricer/
       __init__.py
       cashflows.py
       bond.py
+      swap.py
 ```
 
 The package layout keeps rates instruments under `instruments/rates`, but shared
@@ -273,6 +275,32 @@ Behavior:
 Initial pricing reuses `DiscountingBondEngine`; the engine accepts instruments
 that expose `cashflows()`.
 
+## Vanilla Interest-Rate Swap
+
+Location: `option_pricer.instruments.rates.swaps`
+
+Initial fields:
+
+- `swap_type: SwapType`
+- `notional: float`
+- `fixed_rate: float`
+- `fixed_schedule: Schedule`
+- `fixed_day_count: DayCounter`
+- `floating_schedule: Schedule`
+- `index: IborIndex`
+- `spread: float = 0.0`
+
+Behavior:
+
+- `SwapType.PAYER` means pay fixed and receive floating.
+- `SwapType.RECEIVER` means receive fixed and pay floating.
+- Generate fixed coupons from the fixed schedule.
+- Generate floating coupons from the floating schedule.
+- Do not exchange notional.
+
+Initial pricing uses `DiscountingSwapEngine`, which discounts each leg and
+returns diagnostics for `fixed_leg_pv` and `floating_leg_pv`.
+
 ## Testing Strategy
 
 Schedule tests:
@@ -333,8 +361,11 @@ Current implementation satisfies these criteria through:
 - `option_pricer.cashflows.floating_rate`
 - `option_pricer.engines.discounting.cashflows`
 - `option_pricer.instruments.rates.bonds`
+- `option_pricer.instruments.rates.swaps`
 - `option_pricer.engines.discounting.bond`
+- `option_pricer.engines.discounting.swap`
 - `tests/test_floating_rate_notes.py`
+- `tests/test_interest_rate_swaps.py`
 - `tests/test_schedules.py`
 - `tests/test_cashflows.py`
 - `tests/test_discounting_cashflows.py`

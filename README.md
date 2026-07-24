@@ -106,6 +106,7 @@ py -m uv run python examples/black76_forward_option.py
 py -m uv run python examples/commodity_gold_black76.py
 py -m uv run python examples/fixed_rate_bond.py
 py -m uv run python examples/floating_rate_note.py
+py -m uv run python examples/interest_rate_swap.py
 ```
 
 The examples are intentionally small. They are meant to show how the core
@@ -123,6 +124,8 @@ objects fit together:
   yield curves rather than embedding valuation logic in the product.
 - Floating-rate note examples reuse Ibor indexes, forward-rate curves, floating
   coupons, and the same discounting engine.
+- Interest-rate swap examples compose fixed and floating legs, leaving
+  discounting in a dedicated swap engine.
 
 ## Time Conventions
 
@@ -267,7 +270,8 @@ Supported:
 - Schedule generation, fixed cashflows, fixed-rate coupons, and fixed-rate bond
   discounting.
 - Simple forward-rate projection from discount curves, forward-rate curves,
-  lightweight Ibor indexes, floating-rate coupons, and floating-rate notes.
+  lightweight Ibor indexes, floating-rate coupons, floating-rate notes, and
+  vanilla interest-rate swaps.
 
 Deferred to later phases:
 
@@ -276,6 +280,6 @@ Deferred to later phases:
 - FX delta conventions and ATM/RR/BF quote conversion.
 - Commodity storage, delivery, location, lease-rate, and futures margining
   conventions.
-- Interest-rate swaps.
+- Fixing history and richer rates conventions.
 - General-purpose Monte Carlo/tree frameworks for arbitrary future models.
 - Observer, handle, lazy-evaluation, or global evaluation-date machinery.
