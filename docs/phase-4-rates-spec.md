@@ -9,8 +9,9 @@ is to make those foundations reusable in a small cashflow framework.
 
 Status: the first fixed-income slice described in this document has been
 implemented. The second Phase 4 slice has started with simple forward-rate
-projection and floating-rate coupons. The next work should build on this
-foundation with floating-rate notes and then vanilla interest-rate swaps.
+projection, forward-rate curves, lightweight Ibor indexes, and floating-rate
+coupons. The next work should build on this foundation with floating-rate notes
+and then vanilla interest-rate swaps.
 
 ## Goals
 
@@ -46,6 +47,14 @@ option_pricer/
     __init__.py
     cashflow.py
     fixed_rate.py
+    floating_rate.py
+
+  indexes/
+    __init__.py
+    ibor.py
+
+  termstructures/
+    forward_rate_curve.py
 
   instruments/
     rates/
@@ -171,18 +180,19 @@ class FloatingRateCoupon:
     notional: float
     spread: float
     day_count: DayCounter
-    projection_curve: YieldTermStructure
+    index: IborIndex
 
     def rate(self) -> float:
-        return forward_rate(projection_curve, accrual_start, accrual_end, day_count) + spread
+        return index.rate(accrual_start, accrual_end) + spread
 
     def amount(self) -> float:
         return notional * rate() * day_count.year_fraction(accrual_start, accrual_end)
 ```
 
-This deliberately avoids a full index and fixing framework at first. That can
-be added once floating-rate notes need observation dates, fixing calendars, and
-historical fixings.
+The first implementation uses a lightweight `IborIndex` to hold index
+conventions and a projection curve. It deliberately avoids historical fixings,
+fixing lag, settlement-day rules, and an index manager until floating-rate notes
+need them.
 
 ## Discounting Engine
 

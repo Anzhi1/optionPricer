@@ -14,6 +14,7 @@ from option_pricer.instruments.commodity_option import CommodityVanillaOption
 from option_pricer.instruments.fx_option import FxVanillaOption
 from option_pricer.instruments.rates.bonds import FixedRateBond
 from option_pricer.instruments.vanilla_option import VanillaOption
+from option_pricer.indexes.ibor import IborIndex
 from option_pricer.market.assets import Commodity
 from option_pricer.market.currencies import Currency, CurrencyPair
 from option_pricer.market.quotes import SimpleQuote
@@ -26,6 +27,7 @@ from option_pricer.results.greeks import Greeks
 from option_pricer.results.pricing_result import PricingResult
 from option_pricer.schedules.schedule import DateGenerationRule, Frequency, Schedule, generate_schedule
 from option_pricer.termstructures.forward_curve import FlatForwardCurve, ForwardCurve
+from option_pricer.termstructures.forward_rate_curve import FlatForwardRateCurve, ForwardRateCurve
 from option_pricer.termstructures.volatility import BlackVolCurve, FlatBlackVolatility, FlatVolatility
 from option_pricer.termstructures.yield_curve import DiscountCurve, FlatYieldCurve, ZeroCurve, forward_rate
 from option_pricer.time.business_day import BusinessDayConvention, adjust
@@ -54,6 +56,7 @@ __all__ = [
     "EuropeanMonteCarloEngine",
     "FlatBlackVolatility",
     "FlatForwardCurve",
+    "FlatForwardRateCurve",
     "FlatYieldCurve",
     "FlatVolatility",
     "FixedCashflow",
@@ -61,11 +64,13 @@ __all__ = [
     "FixedRateCoupon",
     "FloatingRateCoupon",
     "ForwardCurve",
+    "ForwardRateCurve",
     "Frequency",
     "FxVanillaOption",
     "GarmanKohlhagenProcess",
     "Greeks",
     "HolidayCalendar",
+    "IborIndex",
     "NullCalendar",
     "OptionType",
     "PlainVanillaPayoff",

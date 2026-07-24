@@ -44,6 +44,7 @@ option_pricer/
   processes/     market dynamics, such as BlackScholesMertonProcess
   engines/       pricing algorithms, such as analytic, tree, and Monte Carlo
   market/        quotes, currencies, and lightweight asset descriptors
+  indexes/       lightweight rate index descriptors
   termstructures/ yield, volatility, and forward price curves
   schedules/     date schedule generation for cashflow products
   cashflows/     dated cashflow and coupon primitives
@@ -262,8 +263,8 @@ Supported:
 - A lightweight gold/precious-metal Black-76 example.
 - Schedule generation, fixed cashflows, fixed-rate coupons, and fixed-rate bond
   discounting.
-- Simple forward-rate projection from discount curves and floating-rate coupon
-  amounts.
+- Simple forward-rate projection from discount curves, forward-rate curves,
+  lightweight Ibor indexes, and floating-rate coupon amounts.
 
 Deferred to later phases:
 

@@ -2,13 +2,13 @@ from dataclasses import dataclass
 from datetime import date
 from math import isfinite
 
-from option_pricer.termstructures.yield_curve import YieldTermStructure, forward_rate
+from option_pricer.indexes.ibor import IborIndex
 from option_pricer.time.daycounters import DayCounter
 
 
 @dataclass(frozen=True)
 class FloatingRateCoupon:
-    """Floating-rate coupon projected from a discount curve."""
+    """Floating-rate coupon projected from an Ibor-style index."""
 
     accrual_start: date
     accrual_end: date
@@ -16,7 +16,7 @@ class FloatingRateCoupon:
     notional: float
     spread: float
     day_count: DayCounter
-    projection_curve: YieldTermStructure
+    index: IborIndex
 
     def __post_init__(self) -> None:
         if not isinstance(self.accrual_start, date):
@@ -35,12 +35,7 @@ class FloatingRateCoupon:
             raise ValueError("spread must be finite")
 
     def rate(self) -> float:
-        return forward_rate(
-            self.projection_curve,
-            self.accrual_start,
-            self.accrual_end,
-            self.day_count,
-        ) + self.spread
+        return self.index.rate(self.accrual_start, self.accrual_end) + self.spread
 
     def amount(self) -> float:
         accrual = self.day_count.year_fraction(self.accrual_start, self.accrual_end)

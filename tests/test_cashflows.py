@@ -2,9 +2,16 @@ from datetime import date
 
 import pytest
 
-from math import exp
-
-from option_pricer import Actual365Fixed, FixedCashflow, FixedRateCoupon, FlatYieldCurve, FloatingRateCoupon
+from option_pricer import (
+    Actual365Fixed,
+    BusinessDayConvention,
+    FixedCashflow,
+    FixedRateCoupon,
+    FlatForwardRateCurve,
+    FloatingRateCoupon,
+    IborIndex,
+    WeekendCalendar,
+)
 
 
 def test_fixed_cashflow_amount() -> None:
@@ -70,10 +77,18 @@ def test_fixed_rate_coupon_rejects_invalid_accrual_dates() -> None:
 
 def test_floating_rate_coupon_projects_rate_and_amount() -> None:
     day_count = Actual365Fixed()
-    curve = FlatYieldCurve(
+    curve = FlatForwardRateCurve(
         rate=0.05,
         reference_date=date(2026, 1, 15),
         day_count=day_count,
+    )
+    index = IborIndex(
+        name="USD-TEST-12M",
+        tenor_months=12,
+        day_count=day_count,
+        fixing_calendar=WeekendCalendar(),
+        business_day_convention=BusinessDayConvention.MODIFIED_FOLLOWING,
+        projection_curve=curve,
     )
     coupon = FloatingRateCoupon(
         accrual_start=date(2027, 1, 15),
@@ -82,9 +97,9 @@ def test_floating_rate_coupon_projects_rate_and_amount() -> None:
         notional=1_000_000.0,
         spread=0.001,
         day_count=day_count,
-        projection_curve=curve,
+        index=index,
     )
-    expected_rate = exp(0.05) - 1.0 + 0.001
+    expected_rate = 0.051
 
     assert coupon.rate() == pytest.approx(expected_rate)
     assert coupon.amount() == pytest.approx(1_000_000.0 * expected_rate)
@@ -99,5 +114,12 @@ def test_floating_rate_coupon_rejects_invalid_inputs() -> None:
             notional=0.0,
             spread=0.001,
             day_count=Actual365Fixed(),
-            projection_curve=FlatYieldCurve(rate=0.05),
+            index=IborIndex(
+                name="USD-TEST-12M",
+                tenor_months=12,
+                day_count=Actual365Fixed(),
+                fixing_calendar=WeekendCalendar(),
+                business_day_convention=BusinessDayConvention.MODIFIED_FOLLOWING,
+                projection_curve=FlatForwardRateCurve(rate=0.05),
+            ),
         )

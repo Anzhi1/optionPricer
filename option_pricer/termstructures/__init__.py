@@ -3,6 +3,11 @@ from option_pricer.termstructures.forward_curve import (
     ForwardCurve,
     ForwardTermStructure,
 )
+from option_pricer.termstructures.forward_rate_curve import (
+    FlatForwardRateCurve,
+    ForwardRateCurve,
+    ForwardRateTermStructure,
+)
 from option_pricer.termstructures.yield_curve import (
     DiscountCurve,
     FlatYieldCurve,
@@ -22,10 +27,13 @@ __all__ = [
     "BlackVolTermStructure",
     "DiscountCurve",
     "FlatForwardCurve",
+    "FlatForwardRateCurve",
     "FlatBlackVolatility",
     "FlatYieldCurve",
     "FlatVolatility",
     "ForwardCurve",
+    "ForwardRateCurve",
+    "ForwardRateTermStructure",
     "ForwardTermStructure",
     "YieldTermStructure",
     "ZeroCurve",
