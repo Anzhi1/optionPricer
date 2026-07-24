@@ -2,6 +2,7 @@
 
 from option_pricer.cashflows.cashflow import FixedCashflow
 from option_pricer.cashflows.fixed_rate import FixedRateCoupon
+from option_pricer.cashflows.floating_rate import FloatingRateCoupon
 from option_pricer.engines.analytic.black_scholes import AnalyticBlackScholesEngine
 from option_pricer.engines.discounting.bond import DiscountingBondEngine
 from option_pricer.engines.discounting.cashflows import DiscountingCashflowEngine
@@ -26,7 +27,7 @@ from option_pricer.results.pricing_result import PricingResult
 from option_pricer.schedules.schedule import DateGenerationRule, Frequency, Schedule, generate_schedule
 from option_pricer.termstructures.forward_curve import FlatForwardCurve, ForwardCurve
 from option_pricer.termstructures.volatility import BlackVolCurve, FlatBlackVolatility, FlatVolatility
-from option_pricer.termstructures.yield_curve import DiscountCurve, FlatYieldCurve, ZeroCurve
+from option_pricer.termstructures.yield_curve import DiscountCurve, FlatYieldCurve, ZeroCurve, forward_rate
 from option_pricer.time.business_day import BusinessDayConvention, adjust
 from option_pricer.time.calendars import HolidayCalendar, NullCalendar, WeekendCalendar
 from option_pricer.time.daycounters import Actual360, Actual365Fixed
@@ -58,6 +59,7 @@ __all__ = [
     "FixedCashflow",
     "FixedRateBond",
     "FixedRateCoupon",
+    "FloatingRateCoupon",
     "ForwardCurve",
     "Frequency",
     "FxVanillaOption",
@@ -74,6 +76,7 @@ __all__ = [
     "WeekendCalendar",
     "ZeroCurve",
     "adjust",
+    "forward_rate",
     "generate_schedule",
     "linear_interpolate",
 ]

@@ -8,9 +8,9 @@ on dates, calendars, day-count conventions, and yield curves, so the first step
 is to make those foundations reusable in a small cashflow framework.
 
 Status: the first fixed-income slice described in this document has been
-implemented. The next Phase 4 work should build on this foundation with
-forward-rate projection, floating-rate coupons or notes, and then vanilla
-interest-rate swaps.
+implemented. The second Phase 4 slice has started with simple forward-rate
+projection and floating-rate coupons. The next work should build on this
+foundation with floating-rate notes and then vanilla interest-rate swaps.
 
 ## Goals
 
@@ -160,6 +160,30 @@ class FixedRateCoupon:
 Principal redemption can be represented as `FixedCashflow` in the first
 implementation.
 
+Floating-rate coupons start with projected, not fixed, rates:
+
+```python
+@dataclass(frozen=True)
+class FloatingRateCoupon:
+    accrual_start: date
+    accrual_end: date
+    payment_date: date
+    notional: float
+    spread: float
+    day_count: DayCounter
+    projection_curve: YieldTermStructure
+
+    def rate(self) -> float:
+        return forward_rate(projection_curve, accrual_start, accrual_end, day_count) + spread
+
+    def amount(self) -> float:
+        return notional * rate() * day_count.year_fraction(accrual_start, accrual_end)
+```
+
+This deliberately avoids a full index and fixing framework at first. That can
+be added once floating-rate notes need observation dates, fixing calendars, and
+historical fixings.
+
 ## Discounting Engine
 
 Location: `option_pricer.engines.discounting.cashflows`
@@ -275,6 +299,7 @@ Current implementation satisfies these criteria through:
 - `option_pricer.schedules.schedule`
 - `option_pricer.cashflows.cashflow`
 - `option_pricer.cashflows.fixed_rate`
+- `option_pricer.cashflows.floating_rate`
 - `option_pricer.engines.discounting.cashflows`
 - `option_pricer.instruments.rates.bonds`
 - `option_pricer.engines.discounting.bond`

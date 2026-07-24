@@ -8,6 +8,7 @@ from option_pricer.termstructures.yield_curve import (
     FlatYieldCurve,
     YieldTermStructure,
     ZeroCurve,
+    forward_rate,
 )
 from option_pricer.termstructures.volatility import (
     BlackVolCurve,
@@ -28,4 +29,5 @@ __all__ = [
     "ForwardTermStructure",
     "YieldTermStructure",
     "ZeroCurve",
+    "forward_rate",
 ]

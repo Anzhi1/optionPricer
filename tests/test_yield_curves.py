@@ -3,7 +3,7 @@ from math import exp, log
 
 import pytest
 
-from option_pricer import Actual365Fixed, DiscountCurve, FlatYieldCurve, ZeroCurve
+from option_pricer import Actual365Fixed, DiscountCurve, FlatYieldCurve, ZeroCurve, forward_rate
 
 
 def test_flat_yield_curve_discount_and_zero_rate_with_time_input() -> None:
@@ -107,3 +107,39 @@ def test_discount_curve_zero_rate_is_undefined_at_time_zero() -> None:
 
     with pytest.raises(ValueError, match="time zero"):
         curve.zero_rate(0.0)
+
+
+def test_forward_rate_from_flat_yield_curve_time_inputs() -> None:
+    curve = FlatYieldCurve(rate=0.05)
+
+    expected = (exp(0.05 * 0.5) - 1.0) / 0.5
+
+    assert forward_rate(curve, 1.0, 1.5) == pytest.approx(expected)
+
+
+def test_forward_rate_from_dated_discount_curve() -> None:
+    curve = FlatYieldCurve(
+        rate=0.05,
+        reference_date=date(2026, 1, 15),
+        day_count=Actual365Fixed(),
+    )
+
+    expected = (exp(0.05) - 1.0)
+
+    assert forward_rate(
+        curve,
+        date(2027, 1, 15),
+        date(2028, 1, 15),
+        Actual365Fixed(),
+    ) == pytest.approx(expected)
+
+
+def test_forward_rate_rejects_invalid_period() -> None:
+    curve = FlatYieldCurve(rate=0.05)
+
+    with pytest.raises(ValueError, match="after start"):
+        forward_rate(curve, 1.0, 1.0)
+    with pytest.raises(TypeError, match="both be dates"):
+        forward_rate(curve, 1.0, date(2027, 1, 15))
+    with pytest.raises(ValueError, match="day_count"):
+        forward_rate(curve, date(2026, 1, 15), date(2027, 1, 15))

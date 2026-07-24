@@ -152,7 +152,8 @@ Implementation details are defined in `docs/phase-4-rates-spec.md`.
 
 Status: first fixed-income slice implemented. Schedule generation, dated
 cashflows, fixed-rate coupons, fixed-rate bonds, and bond discounting are in
-place. Floating-rate notes, swaps, and forward-rate projection remain deferred
+place. Simple forward-rate projection and floating-rate coupons have also
+started the second Phase 4 slice. Floating-rate notes and swaps remain deferred
 within Phase 4.
 
 Scope:
@@ -172,13 +173,15 @@ Implemented:
 - `DiscountingCashflowEngine`.
 - `FixedRateBond`.
 - `DiscountingBondEngine`.
+- Simple `forward_rate(...)` projection from discount factors.
+- `FloatingRateCoupon`.
 - Tests and examples for the fixed-rate bond discounting path.
 
 Deferred:
 
 - Floating-rate notes.
 - Vanilla interest-rate swaps.
-- Forward-rate projection and fixing-date infrastructure.
+- Fixing-date infrastructure.
 
 Non-goals:
 

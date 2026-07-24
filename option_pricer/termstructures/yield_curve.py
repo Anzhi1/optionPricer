@@ -90,6 +90,37 @@ class DiscountCurve:
         return -log(self.discount(time)) / time
 
 
+def forward_rate(
+    discount_curve: YieldTermStructure,
+    start: float | date,
+    end: float | date,
+    day_count: DayCounter | None = None,
+) -> float:
+    """Return a simple annualized forward rate implied by discount factors."""
+
+    accrual = _year_fraction_between(start, end, day_count)
+    start_discount = discount_curve.discount(start)
+    end_discount = discount_curve.discount(end)
+    return (start_discount / end_discount - 1.0) / accrual
+
+
+def _year_fraction_between(start: float | date, end: float | date, day_count: DayCounter | None) -> float:
+    if isinstance(start, date) or isinstance(end, date):
+        if not isinstance(start, date) or not isinstance(end, date):
+            raise TypeError("start and end must both be dates or both be year fractions")
+        if day_count is None:
+            raise ValueError("date forward periods require day_count")
+        accrual = day_count.year_fraction(start, end)
+    else:
+        accrual = float(end) - float(start)
+
+    if not isfinite(accrual):
+        raise ValueError("forward period must be finite")
+    if accrual <= 0.0:
+        raise ValueError("end must be after start")
+    return accrual
+
+
 def _validate_curve_inputs(xs: Sequence[float], ys: Sequence[float], value_name: str) -> None:
     if len(xs) != len(ys):
         raise ValueError(f"times and {value_name} must have the same length")

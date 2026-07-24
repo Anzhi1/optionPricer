@@ -262,6 +262,8 @@ Supported:
 - A lightweight gold/precious-metal Black-76 example.
 - Schedule generation, fixed cashflows, fixed-rate coupons, and fixed-rate bond
   discounting.
+- Simple forward-rate projection from discount curves and floating-rate coupon
+  amounts.
 
 Deferred to later phases:
 
@@ -270,6 +272,6 @@ Deferred to later phases:
 - FX delta conventions and ATM/RR/BF quote conversion.
 - Commodity storage, delivery, location, lease-rate, and futures margining
   conventions.
-- Floating-rate notes, interest-rate swaps, and basic forward-rate projection.
+- Floating-rate notes and interest-rate swaps.
 - General-purpose Monte Carlo/tree frameworks for arbitrary future models.
 - Observer, handle, lazy-evaluation, or global evaluation-date machinery.
