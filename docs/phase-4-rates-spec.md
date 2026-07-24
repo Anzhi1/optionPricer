@@ -299,7 +299,9 @@ Behavior:
 - Do not exchange notional.
 
 Initial pricing uses `DiscountingSwapEngine`, which discounts each leg and
-returns diagnostics for `fixed_leg_pv` and `floating_leg_pv`.
+returns diagnostics for `fixed_leg_pv`, `floating_leg_pv`, and `fair_rate`.
+The engine also exposes `fixed_leg_annuity(...)` and `fair_rate(...)` for
+research workflows.
 
 ## Testing Strategy
 

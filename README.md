@@ -125,7 +125,7 @@ objects fit together:
 - Floating-rate note examples reuse Ibor indexes, forward-rate curves, floating
   coupons, and the same discounting engine.
 - Interest-rate swap examples compose fixed and floating legs, leaving
-  discounting in a dedicated swap engine.
+  discounting and fair-rate calculation in a dedicated swap engine.
 
 ## Time Conventions
 

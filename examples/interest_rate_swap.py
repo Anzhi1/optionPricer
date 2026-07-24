@@ -61,4 +61,5 @@ result = DiscountingSwapEngine(discount_curve).calculate(swap)
 
 print(f"fixed leg pv: {result.diagnostics['fixed_leg_pv']:.2f}")
 print(f"floating leg pv: {result.diagnostics['floating_leg_pv']:.2f}")
+print(f"fair rate: {result.diagnostics['fair_rate']:.4%}")
 print(f"value: {result.value:.2f}")

@@ -87,11 +87,13 @@ def test_discounting_swap_engine_prices_payer_swap() -> None:
     result = DiscountingSwapEngine(discount_curve).calculate(swap)
     fixed_leg_pv = 50_000.0 * exp(-0.05) + 50_000.0 * exp(-0.10)
     floating_leg_pv = 41_000.0 * exp(-0.05) + 41_000.0 * exp(-0.10)
+    fixed_leg_annuity = 1_000_000.0 * exp(-0.05) + 1_000_000.0 * exp(-0.10)
 
     assert result.value == pytest.approx(floating_leg_pv - fixed_leg_pv)
     assert result.diagnostics == {
         "fixed_leg_pv": pytest.approx(fixed_leg_pv),
         "floating_leg_pv": pytest.approx(floating_leg_pv),
+        "fair_rate": pytest.approx(floating_leg_pv / fixed_leg_annuity),
     }
 
 
@@ -108,6 +110,31 @@ def test_discounting_swap_engine_prices_receiver_swap() -> None:
     manual_float = DiscountingCashflowEngine(discount_curve).present_value(swap.floating_leg())
 
     assert result.value == pytest.approx(manual_fixed - manual_float)
+
+
+def test_discounting_swap_engine_calculates_fair_rate() -> None:
+    swap = make_swap(SwapType.PAYER)
+    discount_curve = FlatYieldCurve(
+        rate=0.05,
+        reference_date=date(2026, 1, 15),
+        day_count=Actual365Fixed(),
+    )
+    engine = DiscountingSwapEngine(discount_curve)
+
+    fair_rate = engine.fair_rate(swap)
+    par_swap = VanillaInterestRateSwap(
+        swap_type=SwapType.PAYER,
+        notional=1_000_000.0,
+        fixed_rate=fair_rate,
+        fixed_schedule=make_annual_schedule(),
+        fixed_day_count=Actual365Fixed(),
+        floating_schedule=make_annual_schedule(),
+        index=make_index(),
+        spread=0.001,
+    )
+
+    assert fair_rate == pytest.approx(0.041)
+    assert engine.calculate(par_swap).value == pytest.approx(0.0, abs=1e-10)
 
 
 def test_vanilla_swap_rejects_invalid_notional() -> None:
