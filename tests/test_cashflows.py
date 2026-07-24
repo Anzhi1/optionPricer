@@ -12,6 +12,7 @@ from option_pricer import (
     Frequency,
     IborIndex,
     NullCalendar,
+    Schedule,
     WeekendCalendar,
     fixed_rate_leg,
     floating_rate_leg,
@@ -152,6 +153,41 @@ def test_fixed_rate_leg_builds_coupons_from_schedule() -> None:
     assert leg[1].amount() == pytest.approx(50_000.0)
 
 
+def test_fixed_rate_leg_can_adjust_payment_dates() -> None:
+    schedule = Schedule(dates=(date(2026, 1, 15), date(2027, 1, 16)))
+
+    leg = fixed_rate_leg(
+        schedule=schedule,
+        notional=1_000_000.0,
+        fixed_rate=0.05,
+        day_count=Actual365Fixed(),
+        payment_calendar=WeekendCalendar(),
+        payment_day_convention=BusinessDayConvention.FOLLOWING,
+    )
+
+    assert leg[0].accrual_end == date(2027, 1, 16)
+    assert leg[0].payment_date == date(2027, 1, 18)
+
+
+def test_leg_payment_adjustment_requires_calendar_and_convention_together() -> None:
+    schedule = generate_schedule(
+        start_date=date(2026, 1, 15),
+        end_date=date(2027, 1, 15),
+        frequency=Frequency.ANNUAL,
+        calendar=NullCalendar(),
+        business_day_convention=BusinessDayConvention.UNADJUSTED,
+    )
+
+    with pytest.raises(ValueError, match="provided together"):
+        fixed_rate_leg(
+            schedule=schedule,
+            notional=1_000_000.0,
+            fixed_rate=0.05,
+            day_count=Actual365Fixed(),
+            payment_calendar=WeekendCalendar(),
+        )
+
+
 def test_floating_rate_leg_builds_coupons_from_schedule() -> None:
     day_count = Actual365Fixed()
     schedule = generate_schedule(
@@ -186,3 +222,32 @@ def test_floating_rate_leg_builds_coupons_from_schedule() -> None:
     assert leg[0].rate() == pytest.approx(0.041)
     assert leg[0].amount() == pytest.approx(41_000.0)
     assert leg[1].amount() == pytest.approx(41_000.0)
+
+
+def test_floating_rate_leg_can_adjust_payment_dates() -> None:
+    day_count = Actual365Fixed()
+    schedule = Schedule(dates=(date(2026, 1, 15), date(2027, 1, 16)))
+    index = IborIndex(
+        name="USD-TEST-12M",
+        tenor_months=12,
+        day_count=day_count,
+        fixing_calendar=NullCalendar(),
+        business_day_convention=BusinessDayConvention.UNADJUSTED,
+        projection_curve=FlatForwardRateCurve(
+            rate=0.04,
+            reference_date=date(2026, 1, 15),
+            day_count=day_count,
+        ),
+    )
+
+    leg = floating_rate_leg(
+        schedule=schedule,
+        notional=1_000_000.0,
+        spread=0.001,
+        index=index,
+        payment_calendar=WeekendCalendar(),
+        payment_day_convention=BusinessDayConvention.FOLLOWING,
+    )
+
+    assert leg[0].accrual_end == date(2027, 1, 16)
+    assert leg[0].payment_date == date(2027, 1, 18)

@@ -202,6 +202,10 @@ for building fixed and floating coupon sequences from schedules. They are plain
 functions, not a builder framework, so products can share coupon generation
 without hiding the financial logic.
 
+Leg builders default each coupon payment date to the accrual end date. They also
+accept an optional payment calendar and business-day convention so products can
+adjust payment dates without changing accrual start or accrual end dates.
+
 ## Discounting Engine
 
 Location: `option_pricer.engines.discounting.cashflows`
