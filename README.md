@@ -45,6 +45,8 @@ option_pricer/
   engines/       pricing algorithms, such as analytic, tree, and Monte Carlo
   market/        quotes, currencies, and lightweight asset descriptors
   termstructures/ yield, volatility, and forward price curves
+  schedules/     date schedule generation for cashflow products
+  cashflows/     dated cashflow and coupon primitives
   results/       PricingResult and Greeks
   time/          day counters, calendars, and business-day adjustment
   math/          small numerical helpers
@@ -115,6 +117,8 @@ objects fit together:
   product class.
 - FX and commodity examples add asset-specific contract semantics while reusing
   payoffs, exercise definitions, processes, results, and Black-style engines.
+- Fixed-rate bond examples reuse schedules, dated cashflows, day counters, and
+  yield curves rather than embedding valuation logic in the product.
 
 ## Time Conventions
 
@@ -256,6 +260,8 @@ Supported:
 - FX vanilla options through Garman-Kohlhagen.
 - Forward/futures-style options through Black-76.
 - A lightweight gold/precious-metal Black-76 example.
+- Schedule generation, fixed cashflows, fixed-rate coupons, and fixed-rate bond
+  discounting.
 
 Deferred to later phases:
 
@@ -264,6 +270,6 @@ Deferred to later phases:
 - FX delta conventions and ATM/RR/BF quote conversion.
 - Commodity storage, delivery, location, lease-rate, and futures margining
   conventions.
-- Interest-rate cashflows, schedules, bonds, and swaps.
+- Floating-rate notes, interest-rate swaps, and basic forward-rate projection.
 - General-purpose Monte Carlo/tree frameworks for arbitrary future models.
 - Observer, handle, lazy-evaluation, or global evaluation-date machinery.

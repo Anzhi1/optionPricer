@@ -7,6 +7,11 @@ and discounting. It should not start with swaps directly. Rates products depend
 on dates, calendars, day-count conventions, and yield curves, so the first step
 is to make those foundations reusable in a small cashflow framework.
 
+Status: the first fixed-income slice described in this document has been
+implemented. The next Phase 4 work should build on this foundation with
+forward-rate projection, floating-rate coupons or notes, and then vanilla
+interest-rate swaps.
+
 ## Goals
 
 - Add a minimal schedule-generation utility.
@@ -265,3 +270,16 @@ composition third, pricing last.
 - A discounting bond engine can price the fixed-rate bond.
 - Tests cover schedule, cashflow, discounting, and bond behavior.
 
+Current implementation satisfies these criteria through:
+
+- `option_pricer.schedules.schedule`
+- `option_pricer.cashflows.cashflow`
+- `option_pricer.cashflows.fixed_rate`
+- `option_pricer.engines.discounting.cashflows`
+- `option_pricer.instruments.rates.bonds`
+- `option_pricer.engines.discounting.bond`
+- `tests/test_schedules.py`
+- `tests/test_cashflows.py`
+- `tests/test_discounting_cashflows.py`
+- `tests/test_fixed_rate_bonds.py`
+- `examples/fixed_rate_bond.py`

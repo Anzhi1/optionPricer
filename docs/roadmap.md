@@ -150,15 +150,35 @@ date, day-count, calendar, and curve foundations exist.
 
 Implementation details are defined in `docs/phase-4-rates-spec.md`.
 
+Status: first fixed-income slice implemented. Schedule generation, dated
+cashflows, fixed-rate coupons, fixed-rate bonds, and bond discounting are in
+place. Floating-rate notes, swaps, and forward-rate projection remain deferred
+within Phase 4.
+
 Scope:
 
-- Fixed-rate bonds.
-- Floating-rate notes.
-- Vanilla interest rate swaps.
 - Schedule generation.
 - Cashflow abstraction.
 - Discounting engine.
+- Fixed-rate bonds.
+- Floating-rate notes.
+- Vanilla interest rate swaps.
 - Basic forward-rate projection.
+
+Implemented:
+
+- `Schedule`, `Frequency`, `DateGenerationRule`, and `generate_schedule`.
+- `FixedCashflow` and `FixedRateCoupon`.
+- `DiscountingCashflowEngine`.
+- `FixedRateBond`.
+- `DiscountingBondEngine`.
+- Tests and examples for the fixed-rate bond discounting path.
+
+Deferred:
+
+- Floating-rate notes.
+- Vanilla interest-rate swaps.
+- Forward-rate projection and fixing-date infrastructure.
 
 Non-goals:
 
