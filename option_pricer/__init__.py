@@ -3,6 +3,7 @@
 from option_pricer.cashflows.cashflow import FixedCashflow
 from option_pricer.cashflows.fixed_rate import FixedRateCoupon
 from option_pricer.engines.analytic.black_scholes import AnalyticBlackScholesEngine
+from option_pricer.engines.discounting.bond import DiscountingBondEngine
 from option_pricer.engines.discounting.cashflows import DiscountingCashflowEngine
 from option_pricer.engines.monte_carlo.european_option import EuropeanMonteCarloEngine
 from option_pricer.engines.trees.binomial import BinomialTreeEngine
@@ -10,6 +11,7 @@ from option_pricer.exercise.american import AmericanExercise
 from option_pricer.exercise.european import EuropeanExercise
 from option_pricer.instruments.commodity_option import CommodityVanillaOption
 from option_pricer.instruments.fx_option import FxVanillaOption
+from option_pricer.instruments.rates.bonds import FixedRateBond
 from option_pricer.instruments.vanilla_option import VanillaOption
 from option_pricer.market.assets import Commodity
 from option_pricer.market.currencies import Currency, CurrencyPair
@@ -45,6 +47,7 @@ __all__ = [
     "CurrencyPair",
     "DateGenerationRule",
     "DiscountCurve",
+    "DiscountingBondEngine",
     "DiscountingCashflowEngine",
     "EuropeanExercise",
     "EuropeanMonteCarloEngine",
@@ -53,6 +56,7 @@ __all__ = [
     "FlatYieldCurve",
     "FlatVolatility",
     "FixedCashflow",
+    "FixedRateBond",
     "FixedRateCoupon",
     "ForwardCurve",
     "Frequency",
