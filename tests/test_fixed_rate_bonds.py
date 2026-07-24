@@ -95,5 +95,5 @@ def test_discounting_bond_engine_matches_manual_cashflow_pv() -> None:
 
 
 def test_discounting_bond_engine_rejects_unsupported_instrument() -> None:
-    with pytest.raises(TypeError, match="FixedRateBond"):
+    with pytest.raises(TypeError, match="cashflows"):
         DiscountingBondEngine(FlatYieldCurve(rate=0.05)).calculate(object())  # type: ignore[arg-type]

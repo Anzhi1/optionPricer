@@ -153,8 +153,8 @@ Implementation details are defined in `docs/phase-4-rates-spec.md`.
 Status: first fixed-income slice implemented. Schedule generation, dated
 cashflows, fixed-rate coupons, fixed-rate bonds, and bond discounting are in
 place. Forward-rate projection, forward-rate curves, lightweight Ibor indexes,
-and floating-rate coupons have also started the second Phase 4 slice.
-Floating-rate notes and swaps remain deferred within Phase 4.
+floating-rate coupons, and floating-rate notes are also implemented. Swaps
+remain deferred within Phase 4.
 
 Scope:
 
@@ -177,11 +177,12 @@ Implemented:
 - `FlatForwardRateCurve` and `ForwardRateCurve`.
 - `IborIndex`.
 - `FloatingRateCoupon`.
+- `FloatingRateNote`.
 - Tests and examples for the fixed-rate bond discounting path.
+- Tests and examples for the floating-rate note discounting path.
 
 Deferred:
 
-- Floating-rate notes.
 - Vanilla interest-rate swaps.
 - Fixing-date infrastructure.
 

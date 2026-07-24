@@ -105,6 +105,7 @@ py -m uv run python examples/fx_garman_kohlhagen.py
 py -m uv run python examples/black76_forward_option.py
 py -m uv run python examples/commodity_gold_black76.py
 py -m uv run python examples/fixed_rate_bond.py
+py -m uv run python examples/floating_rate_note.py
 ```
 
 The examples are intentionally small. They are meant to show how the core
@@ -120,6 +121,8 @@ objects fit together:
   payoffs, exercise definitions, processes, results, and Black-style engines.
 - Fixed-rate bond examples reuse schedules, dated cashflows, day counters, and
   yield curves rather than embedding valuation logic in the product.
+- Floating-rate note examples reuse Ibor indexes, forward-rate curves, floating
+  coupons, and the same discounting engine.
 
 ## Time Conventions
 
@@ -264,7 +267,7 @@ Supported:
 - Schedule generation, fixed cashflows, fixed-rate coupons, and fixed-rate bond
   discounting.
 - Simple forward-rate projection from discount curves, forward-rate curves,
-  lightweight Ibor indexes, and floating-rate coupon amounts.
+  lightweight Ibor indexes, floating-rate coupons, and floating-rate notes.
 
 Deferred to later phases:
 
@@ -273,6 +276,6 @@ Deferred to later phases:
 - FX delta conventions and ATM/RR/BF quote conversion.
 - Commodity storage, delivery, location, lease-rate, and futures margining
   conventions.
-- Floating-rate notes and interest-rate swaps.
+- Interest-rate swaps.
 - General-purpose Monte Carlo/tree frameworks for arbitrary future models.
 - Observer, handle, lazy-evaluation, or global evaluation-date machinery.

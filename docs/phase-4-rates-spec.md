@@ -10,8 +10,8 @@ is to make those foundations reusable in a small cashflow framework.
 Status: the first fixed-income slice described in this document has been
 implemented. The second Phase 4 slice has started with simple forward-rate
 projection, forward-rate curves, lightweight Ibor indexes, and floating-rate
-coupons. The next work should build on this foundation with floating-rate notes
-and then vanilla interest-rate swaps.
+coupons. Floating-rate notes are also implemented. The next work should build
+on this foundation with vanilla interest-rate swaps.
 
 ## Goals
 
@@ -252,6 +252,27 @@ result = engine.calculate(bond)
 `DiscountingBondEngine` can be a thin wrapper around `DiscountingCashflowEngine`
 that returns `PricingResult(value=pv)`.
 
+## Floating-Rate Note
+
+Location: `option_pricer.instruments.rates.bonds`
+
+Initial fields:
+
+- `notional: float`
+- `spread: float`
+- `schedule: Schedule`
+- `index: IborIndex`
+
+Behavior:
+
+- Generate floating coupons from adjacent schedule dates.
+- Use the index day counter as the coupon accrual day counter.
+- Add principal redemption on the final schedule date.
+- Return cashflows through `cashflows()`.
+
+Initial pricing reuses `DiscountingBondEngine`; the engine accepts instruments
+that expose `cashflows()`.
+
 ## Testing Strategy
 
 Schedule tests:
@@ -313,6 +334,7 @@ Current implementation satisfies these criteria through:
 - `option_pricer.engines.discounting.cashflows`
 - `option_pricer.instruments.rates.bonds`
 - `option_pricer.engines.discounting.bond`
+- `tests/test_floating_rate_notes.py`
 - `tests/test_schedules.py`
 - `tests/test_cashflows.py`
 - `tests/test_discounting_cashflows.py`
