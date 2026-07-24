@@ -9,8 +9,13 @@ from option_pricer import (
     FixedRateCoupon,
     FlatForwardRateCurve,
     FloatingRateCoupon,
+    Frequency,
     IborIndex,
+    NullCalendar,
     WeekendCalendar,
+    fixed_rate_leg,
+    floating_rate_leg,
+    generate_schedule,
 )
 
 
@@ -123,3 +128,61 @@ def test_floating_rate_coupon_rejects_invalid_inputs() -> None:
                 projection_curve=FlatForwardRateCurve(rate=0.05),
             ),
         )
+
+
+def test_fixed_rate_leg_builds_coupons_from_schedule() -> None:
+    schedule = generate_schedule(
+        start_date=date(2026, 1, 15),
+        end_date=date(2028, 1, 15),
+        frequency=Frequency.ANNUAL,
+        calendar=NullCalendar(),
+        business_day_convention=BusinessDayConvention.UNADJUSTED,
+    )
+
+    leg = fixed_rate_leg(
+        schedule=schedule,
+        notional=1_000_000.0,
+        fixed_rate=0.05,
+        day_count=Actual365Fixed(),
+    )
+
+    assert len(leg) == 2
+    assert isinstance(leg[0], FixedRateCoupon)
+    assert leg[0].amount() == pytest.approx(50_000.0)
+    assert leg[1].amount() == pytest.approx(50_000.0)
+
+
+def test_floating_rate_leg_builds_coupons_from_schedule() -> None:
+    day_count = Actual365Fixed()
+    schedule = generate_schedule(
+        start_date=date(2026, 1, 15),
+        end_date=date(2028, 1, 15),
+        frequency=Frequency.ANNUAL,
+        calendar=NullCalendar(),
+        business_day_convention=BusinessDayConvention.UNADJUSTED,
+    )
+    index = IborIndex(
+        name="USD-TEST-12M",
+        tenor_months=12,
+        day_count=day_count,
+        fixing_calendar=NullCalendar(),
+        business_day_convention=BusinessDayConvention.UNADJUSTED,
+        projection_curve=FlatForwardRateCurve(
+            rate=0.04,
+            reference_date=date(2026, 1, 15),
+            day_count=day_count,
+        ),
+    )
+
+    leg = floating_rate_leg(
+        schedule=schedule,
+        notional=1_000_000.0,
+        spread=0.001,
+        index=index,
+    )
+
+    assert len(leg) == 2
+    assert isinstance(leg[0], FloatingRateCoupon)
+    assert leg[0].rate() == pytest.approx(0.041)
+    assert leg[0].amount() == pytest.approx(41_000.0)
+    assert leg[1].amount() == pytest.approx(41_000.0)

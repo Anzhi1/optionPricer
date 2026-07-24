@@ -49,6 +49,7 @@ option_pricer/
     cashflow.py
     fixed_rate.py
     floating_rate.py
+    legs.py
 
   indexes/
     __init__.py
@@ -195,6 +196,11 @@ The first implementation uses a lightweight `IborIndex` to hold index
 conventions and a projection curve. It deliberately avoids historical fixings,
 fixing lag, settlement-day rules, and an index manager until floating-rate notes
 need them.
+
+Leg builders in `option_pricer.cashflows.legs` provide small reusable helpers
+for building fixed and floating coupon sequences from schedules. They are plain
+functions, not a builder framework, so products can share coupon generation
+without hiding the financial logic.
 
 ## Discounting Engine
 
@@ -361,6 +367,7 @@ Current implementation satisfies these criteria through:
 - `option_pricer.cashflows.cashflow`
 - `option_pricer.cashflows.fixed_rate`
 - `option_pricer.cashflows.floating_rate`
+- `option_pricer.cashflows.legs`
 - `option_pricer.engines.discounting.cashflows`
 - `option_pricer.instruments.rates.bonds`
 - `option_pricer.instruments.rates.swaps`

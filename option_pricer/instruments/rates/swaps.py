@@ -3,8 +3,7 @@ from enum import Enum
 from math import isfinite
 
 from option_pricer.cashflows.cashflow import Cashflow
-from option_pricer.cashflows.fixed_rate import FixedRateCoupon
-from option_pricer.cashflows.floating_rate import FloatingRateCoupon
+from option_pricer.cashflows.legs import fixed_rate_leg, floating_rate_leg
 from option_pricer.indexes.ibor import IborIndex
 from option_pricer.schedules.schedule import Schedule
 from option_pricer.time.daycounters import DayCounter
@@ -47,28 +46,17 @@ class VanillaInterestRateSwap:
             raise TypeError("floating_schedule must be a Schedule")
 
     def fixed_leg(self) -> tuple[Cashflow, ...]:
-        return tuple(
-            FixedRateCoupon(
-                accrual_start=self.fixed_schedule.dates[index - 1],
-                accrual_end=self.fixed_schedule.dates[index],
-                payment_date=self.fixed_schedule.dates[index],
-                notional=self.notional,
-                fixed_rate=self.fixed_rate,
-                day_count=self.fixed_day_count,
-            )
-            for index in range(1, len(self.fixed_schedule.dates))
+        return fixed_rate_leg(
+            schedule=self.fixed_schedule,
+            notional=self.notional,
+            fixed_rate=self.fixed_rate,
+            day_count=self.fixed_day_count,
         )
 
     def floating_leg(self) -> tuple[Cashflow, ...]:
-        return tuple(
-            FloatingRateCoupon(
-                accrual_start=self.floating_schedule.dates[index - 1],
-                accrual_end=self.floating_schedule.dates[index],
-                payment_date=self.floating_schedule.dates[index],
-                notional=self.notional,
-                spread=self.spread,
-                day_count=self.index.day_count,
-                index=self.index,
-            )
-            for index in range(1, len(self.floating_schedule.dates))
+        return floating_rate_leg(
+            schedule=self.floating_schedule,
+            notional=self.notional,
+            spread=self.spread,
+            index=self.index,
         )

@@ -3,6 +3,7 @@
 from option_pricer.cashflows.cashflow import FixedCashflow
 from option_pricer.cashflows.fixed_rate import FixedRateCoupon
 from option_pricer.cashflows.floating_rate import FloatingRateCoupon
+from option_pricer.cashflows.legs import fixed_rate_leg, floating_rate_leg
 from option_pricer.engines.analytic.black_scholes import AnalyticBlackScholesEngine
 from option_pricer.engines.discounting.bond import DiscountingBondEngine
 from option_pricer.engines.discounting.cashflows import DiscountingCashflowEngine
@@ -88,6 +89,8 @@ __all__ = [
     "ZeroCurve",
     "adjust",
     "forward_rate",
+    "fixed_rate_leg",
+    "floating_rate_leg",
     "generate_schedule",
     "linear_interpolate",
 ]

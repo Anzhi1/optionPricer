@@ -170,6 +170,7 @@ Implemented:
 
 - `Schedule`, `Frequency`, `DateGenerationRule`, and `generate_schedule`.
 - `FixedCashflow` and `FixedRateCoupon`.
+- `fixed_rate_leg(...)` and `floating_rate_leg(...)` cashflow helpers.
 - `DiscountingCashflowEngine`.
 - `FixedRateBond`.
 - `DiscountingBondEngine`.
